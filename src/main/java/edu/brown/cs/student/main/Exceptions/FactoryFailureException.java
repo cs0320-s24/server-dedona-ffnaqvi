@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main.Utility;
+package edu.brown.cs.student.main.Exceptions;
 
 import java.util.ArrayList;
 import java.util.List;
