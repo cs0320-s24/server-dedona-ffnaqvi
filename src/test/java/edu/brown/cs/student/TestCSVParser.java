@@ -1,7 +1,5 @@
 package edu.brown.cs.student;
 
-import edu.brown.cs.student.main.Flower.Flower;
-import edu.brown.cs.student.main.Flower.FlowerRowCreator;
 import edu.brown.cs.student.main.Utility.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -40,33 +38,6 @@ public class TestCSVParser {
         new CSVParser<>(new FileReader("data/census/dol_ri_earnings_disparity.csv"), row);
   }
 
-  /**
-   * Test to check CSVParser compatability with Flower Object type (aka any generic object parsing
-   * capability)
-   */
-  @Test
-  public void flowerTest() throws FactoryFailureException {
-    CreatorFromRow flowerRow = new FlowerRowCreator();
-    List<List<Flower>> flowerList = new ArrayList<>();
-    ArrayList<Flower> flower1 = new ArrayList<>();
-    flower1.add(Flower.TULIP);
-    flower1.add(Flower.ROSE);
-    flower1.add(Flower.DAISY);
-    flower1.add(Flower.SPRIG);
-    ArrayList<Flower> flower2 = new ArrayList<>();
-    flower2.add(Flower.ROSE);
-    flower2.add(Flower.TULIP);
-    flower2.add(Flower.DAISY);
-    flower2.add(Flower.SPRIG);
-    flowerList.add(flower1);
-    flowerList.add(flower2);
-
-    // tests expected value of parsing flower object equals the actual parsing
-    CSVParser<Flower> flowerParser =
-        new CSVParser<>(
-            new StringReader("TULIP,ROSE,DAISY,SPRIG\n" + "ROSE,TULIP,DAISY,SPRIG"), flowerRow);
-    Assert.assertEquals(flowerList, flowerParser.getContent());
-  }
   /** Tests CSV data with inconsistent column count; */
   @Test
   public void testMalformedData() {
