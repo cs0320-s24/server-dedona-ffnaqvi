@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import edu.brown.cs.student.main.Creators.CreatorFromRow;
 import edu.brown.cs.student.main.Creators.ListStringCreator;
-import edu.brown.cs.student.main.Parse.CSVParser;
+import edu.brown.cs.student.main.CSVParser.CSVParser;
 import edu.brown.cs.student.main.Search.Search;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
