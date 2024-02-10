@@ -6,10 +6,19 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LoadCSVHandler implements Route {
+
+  private List<List<String>> csvData;
+
+  public LoadCSVHandler(CSVParser<List<String>> parser) throws IOException {
+    parser.parse();
+    this.csvData = parser.getParsedData();
+  }
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
    * the unordered set of recipe cards.
@@ -25,14 +34,15 @@ public class LoadCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-    // Get Query parameters, can be used to make your search more specific
-    // TODO: error for if the city is invalid
-    String cityName = request.queryParams("city");
-    // Initialize a map for our informative response.
     Map<String, Object> responseMap = new HashMap<>();
     // Iterate through the soups in the menu and return the first one
 
-    // TODO: error explaining how to use the API instead of just "error loading"
+    if (!this.csvData.isEmpty()) {
+      responseMap.put("load", csvData.size());
+
+      return new LoadDataSuccessResponse("success", responseMap).serialize();
+    }
+
     return new LoadNoDataFailureResponse().serialize();
   }
 
@@ -80,6 +90,4 @@ public class LoadCSVHandler implements Route {
       return moshi.adapter(LoadNoDataFailureResponse.class).toJson(this);
     }
   }
-
-
 }
