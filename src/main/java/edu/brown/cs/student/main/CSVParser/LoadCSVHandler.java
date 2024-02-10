@@ -44,6 +44,7 @@ public class LoadCSVHandler implements Route {
 
     if (!csvData.isEmpty()) {
 //      responseMap.put("load", csvData.size());
+
       return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
     }
     else {
