@@ -51,7 +51,7 @@ public class Server {
     CreatorFromRow<List<String>> creator = new ListStringCreator();
     Reader reader =
         new BufferedReader(
-            new FileReader("Datasource/ri_city_income.csv"));
+            new FileReader("datasource/ri_city_income.csv"));
     CSVParser<List<String>> parser = new CSVParser<>(reader, creator);
     parser.parse();
     List<List<String>> incomeData = parser.getParsedData();
