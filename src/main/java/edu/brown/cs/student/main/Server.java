@@ -48,15 +48,9 @@ public class Server {
     // TODO: this is where we need to parse the FilePath using CSVParser
     // Sets up data needed for the OrderHandler. You will likely not read from local
     // JSON in this sprint.
-    CreatorFromRow<List<String>> creator = new ListStringCreator();
-    Reader reader =
-        new BufferedReader(
-            new FileReader("datasource/ri_city_income.csv"));
-    CSVParser<List<String>> parser = new CSVParser<>(reader, creator);
-    parser.parse();
-    List<List<String>> incomeData = parser.getParsedData();
 
-    String filePath = null; // SoupAPIUtilities.readInJson("data/menu.json");
+
+//    String filePath = null; // SoupAPIUtilities.readInJson("data/menu.json");
     //    List<Soup> menu = new ArrayList<>();
     //    try {
     //      menu = SoupAPIUtilities.deserializeMenu(menuAsJson);
@@ -69,7 +63,7 @@ public class Server {
     //    }
 
     //Setting up the handler for the GET /order and /activity endpoints
-    Spark.get("income", new IncomeHandler());
+//    Spark.get("income", new IncomeHandler());
     Spark.get("census", new CensusHandler());
     Spark.get("loadCSV", new LoadCSVHandler());
     Spark.get("viewCSV", new ViewCSVHandler());

@@ -2,23 +2,19 @@ package edu.brown.cs.student.main.CSVParser;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import edu.brown.cs.student.main.Creators.CreatorFromRow;
+import edu.brown.cs.student.main.Creators.ListStringCreator;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.io.IOException;
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.List;
-import java.util.Map;
 
 public class LoadCSVHandler implements Route {
 
-  private List<List<String>> csvData;
-
-  public LoadCSVHandler(CSVParser<List<String>> parser) throws IOException {
-    parser.parse();
-    this.csvData = parser.getParsedData();
-  }
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
    * the unordered set of recipe cards.
@@ -34,16 +30,25 @@ public class LoadCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-    Map<String, Object> responseMap = new HashMap<>();
-    // Iterate through the soups in the menu and return the first one
+    String fileName = request.queryParams("fileName");
+    CreatorFromRow<List<String>> creator = new ListStringCreator();
+    Reader reader =
+            new BufferedReader(
+                    new FileReader(fileName));
+    CSVParser<List<String>> parser = new CSVParser<>(reader, creator);
+    parser.parse();
+    List<List<String>> csvData = parser.getParsedData();
 
-    if (!this.csvData.isEmpty()) {
-      responseMap.put("load", csvData.size());
 
-      return new LoadDataSuccessResponse("success", responseMap).serialize();
+//    Map<String, Object> responseMap = new HashMap<>();
+
+    if (!csvData.isEmpty()) {
+//      responseMap.put("load", csvData.size());
+      return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
     }
-
-    return new LoadNoDataFailureResponse().serialize();
+    else {
+      return new LoadNoDataFailureResponse().serialize();
+    }
   }
 
   /*
@@ -53,9 +58,9 @@ public class LoadCSVHandler implements Route {
    */
 
   /** Response object to send, containing a soup with certain ingredients in it */
-  public record LoadDataSuccessResponse(String response_type, Map<String, Object> responseMap) {
-    public LoadDataSuccessResponse(Map<String, Object> responseMap) {
-      this("success", responseMap);
+  public record LoadDataSuccessResponse(String response_type) {
+    public LoadDataSuccessResponse() {
+      this("success");
     }
     /**
      * @return this response, serialized as Json
