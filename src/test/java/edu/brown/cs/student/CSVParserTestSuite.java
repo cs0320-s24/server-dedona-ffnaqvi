@@ -1,11 +1,11 @@
 package edu.brown.cs.student;
 
+import edu.brown.cs.student.main.CSVParser.CSVParser;
 import edu.brown.cs.student.main.Creators.CreatorFromRow;
 import edu.brown.cs.student.main.Creators.IntegerCreator;
 import edu.brown.cs.student.main.Creators.ListStringCreator;
 import edu.brown.cs.student.main.Creators.StringCreator;
 import edu.brown.cs.student.main.Exceptions.FactoryFailureException;
-import edu.brown.cs.student.main.CSVParser.CSVParser;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;

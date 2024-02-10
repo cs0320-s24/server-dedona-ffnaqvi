@@ -1,8 +1,8 @@
 package edu.brown.cs.student.main;
 
+import edu.brown.cs.student.main.CSVParser.CSVParser;
 import edu.brown.cs.student.main.Creators.CreatorFromRow;
 import edu.brown.cs.student.main.Creators.ListStringCreator;
-import edu.brown.cs.student.main.CSVParser.CSVParser;
 import edu.brown.cs.student.main.Search.Search;
 import java.io.*;
 import java.util.AbstractMap;
