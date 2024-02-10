@@ -20,8 +20,6 @@ public class Server {
 
 
   Once you have server, should instantiate all of the endpoints to be using; each endpoint (aka handler, should have its own class that should implement spark route)
-
-
    */
 
   public static void main(String[] args) {
@@ -37,7 +35,7 @@ public class Server {
           response.header("Access-Control-Allow-Methods", "*");
         });
 
-    //TODO: this is where we need to parse the FilePath
+    //TODO: this is where we need to parse the FilePath using CSVParser
     // Sets up data needed for the OrderHandler. You will likely not read from local
     // JSON in this sprint.
     String filePath = null; //SoupAPIUtilities.readInJson("data/menu.json");
