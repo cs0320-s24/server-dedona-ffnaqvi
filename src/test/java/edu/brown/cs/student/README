@@ -1,0 +1,85 @@
+JUnit tests should go in this directory.
+
+Make sure you package these classes properly so that you earn the Code Organization Badge!
+
+____________________________________________________________________________________________________
+
+This project is a CSV (Comma-Separated Values) parser implemented in Java. The parser is designed to
+read CSV data from various sources, such as files or strings, and create objects based on the
+specified data structure using a CreatorFromRow interface. The project includes a CSVParser class
+responsible for the parsing logic and several utility classes to support the process.
+
+____________________________________________________________________________________________________
+
+The project is organized into several packages:
+
+Creators: Contains classes implementing the CreatorFromRow interface to create objects from CSV
+rows, such as IntegerCreator and ListStringCreator.
+Parse: Contains the CSVParser class responsible for parsing CSV data and creating objects based on
+the provided CreatorFromRow.
+Search: Contains the Search class used to refine parsed CSV data
+Exceptions: Contains custom exception classes, such as FactoryFailureException and
+InvalidObjectException.
+
+Classes:
+
+Main - The Main class is what calls the user repl. This repl is what obtains all the necessary data
+        from the user including the filePath, searchValue, if the file hasHeaders, if the user would
+        like to search by column name, index, or none, and allows the user to quit at any time.
+
+Search - The Search class narrows down and retrieves specific data from the CSVParser by calling
+        CSVParser.parse. The primary purpose of the class is to print to the terminal columns that
+        correspond with search criteria. There is also a getter method for testing output.
+
+CSVParser - The CSVParser class provides a clean and modular solution for developers. It promotes
+        reusability by allowing developers to define custom object creation logic through the
+        CreatorFromRow interface. Overall, the class facilitates the transformation of raw CSV data
+        into a structured format that aligns with the requirements of the consuming application.
+
+        The class reads CSV data from a specified source, such as a file or string, using a
+        BufferedReader. It processes each line of the CSV data iteratively. For each line, the class
+        utilizes the splitCSVRow method to split the CSV row into individual elements based on a
+        provided regular expression. It ensures that all rows have consistent column sizes by
+        comparing the size of each row with the size of the first row encountered.
+        There is also a getter method for testing that the file is parsed.
+
+Creator classes - Creates a type object from a row of CSV data. Both creator classes adhere to the
+        common CreatorFromRow interface, enabling them to be used interchangeably in the CSVParser
+        class. This common interface facilitates flexibility in choosing different object creation
+        strategies based on the specific requirements of the application. Developers can extend this
+        pattern to create additional creator classes tailored for different data types or specific
+        business logic. The separation of the object creation logic into distinct classes enhances
+        the maintainability and extensibility of the CSV parsing functionality.
+
+____________________________________________________________________________________________________
+
+Building and Running
+
+To build and run the project, follow these steps:
+
+Clone the repository
+Compile the code: mvn package
+Run the program: ./run
+
+____________________________________________________________________________________________________
+
+High-Level Design Decisions
+
+CSVParser Class: The core of the project, responsible for reading CSV data, splitting rows, and
+creating objects using the specified CreatorFromRow.
+
+CreatorFromRow Interface: Allows flexibility in creating different types of objects from CSV rows.
+Implemented by classes like IntegerCreator and ListStringCreator.
+
+Exception Handling: Custom exceptions (FactoryFailureException and InvalidObjectException) are used
+to handle errors during the parsing and object creation process.
+
+Returning a map for column identifiers: By using a map, the user is able to store both Integer and
+String data in one structure, allowing for ease of use
+
+Malformed CSV files: if the CSVParser detects a malformed CSV file with inconsistent columns, it will
+throw an exception as the data may not be what the user is intending it to look like.
+
+____________________________________________________________________________________________________
+
+Github Repo: https://github.com/cs0320-s24/csv-danidedona.git
