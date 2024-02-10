@@ -1,6 +1,6 @@
 package edu.brown.cs.student.main.Search;
 
-import edu.brown.cs.student.main.Parse.CSVParser;
+import edu.brown.cs.student.main.CSVParser.CSVParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

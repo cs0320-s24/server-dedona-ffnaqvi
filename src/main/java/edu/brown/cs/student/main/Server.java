@@ -1,10 +1,21 @@
 package edu.brown.cs.student.main;
 
+import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
+import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
+import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
+import edu.brown.cs.student.main.Creators.CreatorFromRow;
+import edu.brown.cs.student.main.Creators.ListStringCreator;
+import edu.brown.cs.student.main.Census.*;
+import edu.brown.cs.student.main.Income.IncomeHandler;
+import edu.brown.cs.student.main.CSVParser.CSVParser;
 import spark.Spark;
 
 import static spark.Spark.after;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.List;
 
 public class Server {
@@ -22,7 +33,7 @@ public class Server {
   Once you have server, should instantiate all of the endpoints to be using; each endpoint (aka handler, should have its own class that should implement spark route)
    */
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
 
     int port = 3232;
     Spark.port(port);
@@ -38,7 +49,14 @@ public class Server {
     //TODO: this is where we need to parse the FilePath using CSVParser
     // Sets up data needed for the OrderHandler. You will likely not read from local
     // JSON in this sprint.
-    String filePath = null; //SoupAPIUtilities.readInJson("data/menu.json");
+      CreatorFromRow<List<String>> creator = new ListStringCreator();
+      Reader reader = new BufferedReader(new FileReader("edu/brown/cs/student/main/Datasource/RI City & Town Income.csv"));
+      CSVParser<List<String>> parser = new CSVParser<>(reader, creator);
+      parser.parse();
+      List<List<String>> incomeData = parser.getParsedData();
+
+
+      String filePath = null; //SoupAPIUtilities.readInJson("data/menu.json");
 //    List<Soup> menu = new ArrayList<>();
 //    try {
 //      menu = SoupAPIUtilities.deserializeMenu(menuAsJson);
@@ -50,10 +68,14 @@ public class Server {
 //    }
 
 //    // Setting up the handler for the GET /order and /activity endpoints
-//    Spark.get("order", new OrderHandler(menu));
-//    Spark.get("activity", new ActivityHandler());
-//    Spark.init();
-//    Spark.awaitInitialization();
+    Spark.get("income", new IncomeHandler());
+    Spark.get("census", new CensusHandler());
+    Spark.get("loadCSV", new LoadCSVHandler());
+    Spark.get("viewCSV", new ViewCSVHandler());
+    Spark.get("searchCSV", new SearchCSVHandler());
+
+    Spark.init();
+    Spark.awaitInitialization();
 
     // Notice this link alone leads to a 404... Why is that?
     System.out.println("Server started at http://localhost:" + port);

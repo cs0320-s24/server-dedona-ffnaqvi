@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main.Handlers;
+package edu.brown.cs.student.main.Census;
 
 import spark.Request;
 import spark.Response;
@@ -63,7 +63,6 @@ public class CensusHandler implements Route {
     private String sendRequest(int participants)
             throws URISyntaxException, IOException, InterruptedException {
         // Build a request to this BoredAPI. Try out this link in your browser, what do you see?
-        // TODO 1: Looking at the documentation, how can we add to the URI to query based
         // on participant number?
         HttpRequest buildBoredApiRequest =
                 HttpRequest.newBuilder()
