@@ -26,11 +26,17 @@ public class IncomeHandler implements Route {
 
         // Get Query parameters, can be used to make your search more specific
         String soupname = request.queryParams("soupName");
+        /*
+        city town
+        mediuan househod income
+        median fmaily income
+        per capita income
+         */
         // Initialize a map for our informative response.
         Map<String, Object> responseMap = new HashMap<>();
         // Iterate through the soups in the menu and return the first one
         //TODO: a condition for returning success
-        return new SoupNoRecipesFailureResponse().serialize();
+        return new IncomeNoInputFailureResponse().serialize();
     }
 
     /*
@@ -62,10 +68,10 @@ public class IncomeHandler implements Route {
             }
         }
     }
-    //TODO: change to income success and failure
-    /** Response object to send if someone requested soup from an empty Menu */
-    public record SoupNoRecipesFailureResponse(String response_type) {
-        public SoupNoRecipesFailureResponse() {
+    //TODO: change in order to give user an informative message explaining how to use
+    /** Response object to send if someone requested income non existent data */
+    public record IncomeNoInputFailureResponse(String response_type) {
+        public IncomeNoInputFailureResponse() {
             this("error");
         }
 
@@ -74,7 +80,7 @@ public class IncomeHandler implements Route {
          */
         String serialize() {
             Moshi moshi = new Moshi.Builder().build();
-            return moshi.adapter(SoupNoRecipesFailureResponse.class).toJson(this);
+            return moshi.adapter(IncomeNoInputFailureResponse.class).toJson(this);
         }
     }
 }
