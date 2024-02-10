@@ -67,7 +67,7 @@ public class LoadCSVHandler implements Route {
   /** Response object to send if someone requested data from an invalid csv */
   public record LoadNoDataFailureResponse(String response_type) {
     public LoadNoDataFailureResponse() {
-      this("error");
+      this("error loading");
     }
 
     /**

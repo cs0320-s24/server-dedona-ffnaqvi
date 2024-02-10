@@ -68,7 +68,7 @@ public class Server {
     //      System.err.println("Errored while deserializing the menu");
     //    }
 
-    //    // Setting up the handler for the GET /order and /activity endpoints
+    //Setting up the handler for the GET /order and /activity endpoints
     Spark.get("income", new IncomeHandler());
     Spark.get("census", new CensusHandler());
     Spark.get("loadCSV", new LoadCSVHandler());
