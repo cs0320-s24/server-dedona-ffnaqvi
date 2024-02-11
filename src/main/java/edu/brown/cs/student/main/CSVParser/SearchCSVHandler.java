@@ -20,6 +20,7 @@ public class SearchCSVHandler implements Route {
 //    status = loadStatus;
     this.csvData = pCsvData;
   }
+
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
    * the unordered set of recipe cards.
@@ -36,6 +37,7 @@ public class SearchCSVHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
 
     // Get Query parameters, can be used to make your search more specific
+
     String cityName = request.queryParams("city");
     String medianHouseIncome = request.queryParams("medianHouseIncome");
     String medianFamilyIncome = request.queryParams("medianFamilyIncome");
@@ -50,6 +52,15 @@ public class SearchCSVHandler implements Route {
 
     }
     return new SearchDataFailureResponse().serialize();
+
+//    if (!csvData.isEmpty()) {
+//     //      responseMap.put("load", csvData.size());
+//           return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
+//         }
+//         else {
+//           return new LoadNoDataFailureResponse().serialize();
+//         }
+
   }
 
   /*
