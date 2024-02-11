@@ -7,9 +7,18 @@ import spark.Response;
 import spark.Route;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ViewCSVHandler implements Route {
+
+  private int status;
+  private List<List<String>> csvData;
+
+  public ViewCSVHandler(int loadStatus, List<List<String>> pCsvData) {
+    this.status = loadStatus;
+    this.csvData = pCsvData;
+  }
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
    * the unordered set of recipe cards.
@@ -25,13 +34,16 @@ public class ViewCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-    // Get Query parameters, can be used to make your search more specific
-    String cityName = request.queryParams("city");
-    // Initialize a map for our informative response.
-    Map<String, Object> responseMap = new HashMap<>();
-    // Iterate through the soups in the menu and return the first one
+    if (this.status == 200) {
+      System.out.println(this.csvData);
+      return new ViewDataSuccessResponse(this.csvData).serialize();
+    }
 
-    return new ViewDataFailureResponse().serialize();
+    else {
+      return new ViewDataFailureResponse("The CSV data hasn't been loaded yet").serialize();
+
+    }
+
   }
 
   /*
@@ -41,9 +53,9 @@ public class ViewCSVHandler implements Route {
    */
 
   /** Response object to send, containing a soup with certain ingredients in it */
-  public record ViewDataSuccessResponse(String response_type, Map<String, Object> responseMap) {
-    public ViewDataSuccessResponse(Map<String, Object> responseMap) {
-      this("success", responseMap);
+  public record ViewDataSuccessResponse(String response_type, List<List<String>> data) {
+    public ViewDataSuccessResponse(List<List<String>> data) {
+      this("success", data);
     }
     /**
      * @return this response, serialized as Json
