@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SearchCSVHandler implements Route {
+
+  private LoadCSVHandler loadCSVHandler;
+
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
    * the unordered set of recipe cards.
@@ -26,12 +29,21 @@ public class SearchCSVHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
 
     // Get Query parameters, can be used to make your search more specific
-    String cityName = request.queryParams("city");
+    String searchKeyword = request.queryParams("searchKeyword");
     // Initialize a map for our informative response.
     Map<String, Object> responseMap = new HashMap<>();
     // Iterate through the soups in the menu and return the first one
 
     return new SearchDataFailureResponse().serialize();
+
+//    if (!csvData.isEmpty()) {
+//     //      responseMap.put("load", csvData.size());
+//           return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
+//         }
+//         else {
+//           return new LoadNoDataFailureResponse().serialize();
+//         }
+
   }
 
   /*
