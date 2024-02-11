@@ -17,10 +17,12 @@ import java.util.List;
 public class LoadCSVHandler implements Route {
 //  private static int status;
   private List<List<String>> csvData;
+  private CSVParser<List<String>> csvParserData;
 
-  public LoadCSVHandler(/*int loadStatus,*/ List<List<String>> pCsvData) {
+  public LoadCSVHandler(/*int loadStatus,*/ List<List<String>> pCsvData, CSVParser<List<String>> pCsvParserData) {
 //    status = loadStatus;
     this.csvData = pCsvData;
+    this.csvParserData = pCsvParserData;
   }
 
   /**
@@ -44,9 +46,9 @@ public class LoadCSVHandler implements Route {
     Reader reader =
             new BufferedReader(
                     new FileReader(fileName));
-    CSVParser<List<String>> parser = new CSVParser<>(reader, creator);
-    parser.parse();
-    this.csvData = parser.getParsedData();
+    this.csvParserData = new CSVParser<>(reader, creator);
+    this.csvParserData.parse();
+    this.csvData = this.csvParserData.getParsedData();
 
     if (!csvData.isEmpty()) {
       Server.loadStatus = 200; //success code

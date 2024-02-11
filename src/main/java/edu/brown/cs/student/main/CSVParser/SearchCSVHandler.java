@@ -1,8 +1,18 @@
 package edu.brown.cs.student.main.CSVParser;
 
 import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonClass;
 import com.squareup.moshi.Moshi;
+import edu.brown.cs.student.main.CSVParser.LoadCSVHandler.LoadDataSuccessResponse;
+import edu.brown.cs.student.main.Creators.CreatorFromRow;
+import edu.brown.cs.student.main.Creators.ListStringCreator;
+import edu.brown.cs.student.main.Search.Search;
 import edu.brown.cs.student.main.Server;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.AbstractMap;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -13,12 +23,14 @@ import java.util.Map;
 
 public class SearchCSVHandler implements Route {
 
-  private static int status;
+  private int status;
   private List<List<String>> csvData;
+  private CSVParser<List<String>> csvParserData;
 
-  public SearchCSVHandler(/*int loadStatus,*/ List<List<String>> pCsvData) {
+  public SearchCSVHandler(/*int loadStatus,*/ List<List<String>> pCsvData, CSVParser<List<String>> pCsvParserData) {
 //    status = loadStatus;
     this.csvData = pCsvData;
+    this.csvParserData = pCsvParserData;
   }
 
   /**
@@ -36,15 +48,55 @@ public class SearchCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-    // Get Query parameters, can be used to make your search more specific
-
-    String cityName = request.queryParams("city");
-    String medianHouseIncome = request.queryParams("medianHouseIncome");
-    String medianFamilyIncome = request.queryParams("medianFamilyIncome");
-    String perCapitaIncome = request.queryParams("perCapitaIncome");
+    /*
+    example of how to run:
+    http://localhost:3232/searchCSV?searchValue=Barrington&hasHeaders=True
+    searchValue: Barrington
+    hasHeaders: true
+    columnNameIdentifier: null
+    columnIndexIdentifier: null
+     */
 
     if (Server.loadStatus == 200) {
-      //TODO: handle searching and printing the CSV data
+      String searchValue = request.queryParams("searchValue");
+      boolean hasHeaders = Boolean.parseBoolean(request.queryParams("hasHeaders"));
+      String columnNameIdentifier;
+      Integer columnIndexIdentifier;
+
+      try {
+        columnNameIdentifier = request.queryParams("columnNameIdentifier");
+      }
+      catch (NullPointerException e) {
+        columnNameIdentifier = null;
+      }
+
+      try {
+        columnIndexIdentifier = Integer.parseInt(request.queryParams("columnIndexIdentifier"));
+      }
+      catch (NullPointerException | NumberFormatException e) {
+        columnIndexIdentifier = null;
+      }
+
+      try {
+        //TODO: handle searching and printing the CSV data
+        System.out.println("searchValue: " + searchValue);
+        System.out.println("columnNameIdentifier: " + columnNameIdentifier);
+        System.out.println("columnIndexIdentifier: " + columnIndexIdentifier);
+        System.out.println("hasHeaders: " + hasHeaders);
+        CSVParser<List<String>> parser = this.csvParserData;
+        Map.Entry<String, Integer> columnIdentifier = new AbstractMap.SimpleEntry<>(
+            columnNameIdentifier, columnIndexIdentifier);
+        Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
+        search.search();
+        List<List<String>> searchResults = search.getResultList();
+        return new SearchDataSuccessResponse(searchResults).serialize();
+      }
+      catch (Exception e) {
+      // Handle any other unexpected exceptions
+      e.printStackTrace();
+      throw new RuntimeException("Unexpected error during processing: " + e.getMessage());
+    }
+
 //      return new SearchDataSuccessResponse();
     }
     if (this.status != 200) {
@@ -53,26 +105,30 @@ public class SearchCSVHandler implements Route {
     }
     return new SearchDataFailureResponse().serialize();
 
-//    if (!csvData.isEmpty()) {
-//     //      responseMap.put("load", csvData.size());
-//           return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
-//         }
-//         else {
-//           return new LoadNoDataFailureResponse().serialize();
-//         }
 
   }
 
-  /*
-   * Ultimately up to you how you want to structure your success and failure responses, but they
-   * should be distinguishable in some form! We show one form here and another form in ActivityHandler
-   * and you are also free to do your own way!
-   */
-
   /** Response object to send, containing a soup with certain ingredients in it */
-  public record SearchDataSuccessResponse(String response_type, Map<String, Object> responseMap) {
-    public SearchDataSuccessResponse(Map<String, Object> responseMap) {
-      this("success", responseMap);
+  @JsonClass(generateAdapter = true)
+  /*
+  used in conjunction with the Moshi library in Java to automatically generate a JSON adapter for a
+  class. Moshi uses code generation to create a specialized adapter that knows how to serialize and
+  deserialize instances of the annotated class to and from JSON.
+
+  @JsonClass: This annotation indicates to Moshi that it should generate a JSON adapter for the
+        annotated class.
+  generateAdapter = true: This is a parameter of the @JsonClass annotation. When set to true, it
+        instructs Moshi to generate an adapter for the annotated class during the compilation
+        process. The generated adapter will be tailored to the structure of the annotated class,
+        making the serialization and deserialization processes efficient and specific to that class.
+
+  Using @JsonClass(generateAdapter = true) is a convenient way to avoid manually writing JSON
+  adapters for your classes. Moshi takes care of the boilerplate code needed for serialization and
+  deserialization based on the structure of your class.
+   */
+  public record SearchDataSuccessResponse(String response_type, List<List<String>> responseMap) {
+    public SearchDataSuccessResponse(List<List<String>> responseData) {
+      this("success", responseData);
     }
     /**
      * @return this response, serialized as Json
@@ -88,7 +144,7 @@ public class SearchCSVHandler implements Route {
         // Otherwise we'll just get an error 500 from the API in integration
         // testing.
         e.printStackTrace();
-        throw e;
+        throw new RuntimeException("Error during Moshi serialization: " + e.getMessage());
       }
     }
   }
