@@ -2,6 +2,7 @@ package edu.brown.cs.student.main;
 
 import static spark.Spark.after;
 
+import edu.brown.cs.student.main.CSVParser.CSVParser;
 import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
 import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
 import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
@@ -29,6 +30,7 @@ public class Server {
   public static int loadStatus;
 
   private static List<List<String>> csvData;
+  private static CSVParser<List<String>> csvParserData;
 
   public static void main(String[] args) throws IOException {
 
@@ -46,11 +48,11 @@ public class Server {
 
     //Setting up the handler for the GET /order and /activity endpoints
     Spark.get("census", new CensusHandler());
-    Spark.get("loadCSV", new LoadCSVHandler(csvData));
+    Spark.get("loadCSV", new LoadCSVHandler(csvData,csvParserData));
     System.out.println("status in server:" + loadStatus);
 
     Spark.get("viewCSV", new ViewCSVHandler(csvData));
-    Spark.get("searchCSV", new SearchCSVHandler(csvData));
+    Spark.get("searchCSV", new SearchCSVHandler(csvData,csvParserData));
 
     Spark.init();
     Spark.awaitInitialization();
