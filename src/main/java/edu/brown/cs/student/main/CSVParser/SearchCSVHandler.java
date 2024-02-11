@@ -29,6 +29,7 @@ public class SearchCSVHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
 
     // Get Query parameters, can be used to make your search more specific
+
     String cityName = request.queryParams("city");
     String medianHouseIncome = request.queryParams("medianHouseIncome");
     String medianFamilyIncome = request.queryParams("medianFamilyIncome");
