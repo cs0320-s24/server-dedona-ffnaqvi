@@ -2,6 +2,7 @@ package edu.brown.cs.student.main.CSVParser;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import edu.brown.cs.student.main.Server;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -12,11 +13,11 @@ import java.util.Map;
 
 public class SearchCSVHandler implements Route {
 
-  private int status;
+  private static int status;
   private List<List<String>> csvData;
 
-  public SearchCSVHandler(int loadStatus, List<List<String>> pCsvData) {
-    this.status = loadStatus;
+  public SearchCSVHandler(/*int loadStatus,*/ List<List<String>> pCsvData) {
+//    status = loadStatus;
     this.csvData = pCsvData;
   }
   /**
@@ -40,7 +41,7 @@ public class SearchCSVHandler implements Route {
     String medianFamilyIncome = request.queryParams("medianFamilyIncome");
     String perCapitaIncome = request.queryParams("perCapitaIncome");
 
-    if (this.status == 200) {
+    if (Server.loadStatus == 200) {
       //TODO: handle searching and printing the CSV data
 //      return new SearchDataSuccessResponse();
     }

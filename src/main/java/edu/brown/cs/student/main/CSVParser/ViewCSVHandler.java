@@ -2,6 +2,7 @@ package edu.brown.cs.student.main.CSVParser;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import edu.brown.cs.student.main.Server;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -12,11 +13,12 @@ import java.util.Map;
 
 public class ViewCSVHandler implements Route {
 
-  private int status;
+  private static int status;
   private List<List<String>> csvData;
 
-  public ViewCSVHandler(int loadStatus, List<List<String>> pCsvData) {
-    this.status = loadStatus;
+  public ViewCSVHandler(/*int loadStatus,*/ List<List<String>> pCsvData) {
+//    status = loadStatus;
+    System.out.println("variable status in View is:" + Server.loadStatus);
     this.csvData = pCsvData;
   }
   /**
@@ -34,14 +36,13 @@ public class ViewCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-    if (this.status == 200) {
+    if (Server.loadStatus == 200) {
       System.out.println(this.csvData);
       return new ViewDataSuccessResponse(this.csvData).serialize();
     }
 
     else {
       return new ViewDataFailureResponse("The CSV data hasn't been loaded yet").serialize();
-
     }
 
   }
