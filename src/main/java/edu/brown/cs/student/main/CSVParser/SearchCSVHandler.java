@@ -7,9 +7,18 @@ import spark.Response;
 import spark.Route;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SearchCSVHandler implements Route {
+
+  private int status;
+  private List<List<String>> csvData;
+
+  public SearchCSVHandler(int loadStatus, List<List<String>> pCsvData) {
+    this.status = loadStatus;
+    this.csvData = pCsvData;
+  }
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
    * the unordered set of recipe cards.
@@ -27,10 +36,18 @@ public class SearchCSVHandler implements Route {
 
     // Get Query parameters, can be used to make your search more specific
     String cityName = request.queryParams("city");
-    // Initialize a map for our informative response.
-    Map<String, Object> responseMap = new HashMap<>();
-    // Iterate through the soups in the menu and return the first one
+    String medianHouseIncome = request.queryParams("medianHouseIncome");
+    String medianFamilyIncome = request.queryParams("medianFamilyIncome");
+    String perCapitaIncome = request.queryParams("perCapitaIncome");
 
+    if (this.status == 200) {
+      //TODO: handle searching and printing the CSV data
+//      return new SearchDataSuccessResponse();
+    }
+    if (this.status != 200) {
+      return new SearchDataFailureResponse("The CSV has not been loaded yet").serialize();
+
+    }
     return new SearchDataFailureResponse().serialize();
   }
 
