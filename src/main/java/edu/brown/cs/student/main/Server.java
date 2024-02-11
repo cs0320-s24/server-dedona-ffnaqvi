@@ -2,6 +2,7 @@ package edu.brown.cs.student.main;
 
 import static spark.Spark.after;
 
+import edu.brown.cs.student.main.CSVParser.CSVParser;
 import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
 import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
 import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
@@ -25,6 +26,7 @@ public class Server {
   Once you have server, should instantiate all of the endpoints to be using; each endpoint (aka handler, should have its own class that should implement spark route)
    */
   public static int loadStatus;
+  public static CSVParser<List<String>> parser;
 
   public static List<List<String>> csvData;
 

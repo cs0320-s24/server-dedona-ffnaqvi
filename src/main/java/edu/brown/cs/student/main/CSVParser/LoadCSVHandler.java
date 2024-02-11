@@ -37,9 +37,9 @@ public class LoadCSVHandler implements Route {
     Reader reader =
             new BufferedReader(
                     new FileReader(fileName));
-    CSVParser<List<String>> parser = new CSVParser<>(reader, creator);
-    parser.parse();
-    Server.csvData = parser.getParsedData();
+    Server.parser = new CSVParser<>(reader, creator);
+    Server.parser.parse();
+    Server.csvData = Server.parser.getParsedData();
 
     if (!Server.csvData.isEmpty()) {
       Server.loadStatus = 200; //success code
@@ -49,6 +49,7 @@ public class LoadCSVHandler implements Route {
       Server.loadStatus = -1;
       return new LoadNoDataFailureResponse().serialize();
     }
+
   }
 
   /*
