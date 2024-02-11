@@ -22,8 +22,6 @@ public class Server {
         `loadcsv`
         `viewcsv`
         `searchcsv`
-
-
   Once you have server, should instantiate all of the endpoints to be using; each endpoint (aka handler, should have its own class that should implement spark route)
    */
   public static int loadStatus;

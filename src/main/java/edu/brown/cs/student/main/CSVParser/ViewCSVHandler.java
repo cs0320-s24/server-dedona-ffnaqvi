@@ -27,7 +27,13 @@ public class ViewCSVHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
 
     if (Server.loadStatus == 200) {
-      return new ViewDataSuccessResponse(Server.csvData).serialize();
+      String[][] parsedData = new String[Server.csvData.size()][Server.csvData.get(0).size()];
+      for (int r = 0; r < parsedData.length; r ++) {
+        for (int c = 0; c < parsedData[0].length; c++) {
+          parsedData[r][c] = Server.csvData.get(r).get(c);
+        }
+      }
+      return new ViewDataSuccessResponse(parsedData).serialize();
     }
 
     else {
@@ -43,8 +49,8 @@ public class ViewCSVHandler implements Route {
    */
 
   /** Response object to send, containing a soup with certain ingredients in it */
-  public record ViewDataSuccessResponse(String response_type, List<List<String>> data) {
-    public ViewDataSuccessResponse(List<List<String>> data) {
+  public record ViewDataSuccessResponse(String response_type, String[][] data) {
+    public ViewDataSuccessResponse(String[][] data) {
       this("success", data);
     }
     /**
@@ -55,7 +61,7 @@ public class ViewCSVHandler implements Route {
         // Initialize Moshi which takes in this class and returns it as JSON!
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ViewDataSuccessResponse> adapter = moshi.adapter(ViewDataSuccessResponse.class);
-        return adapter.toJson(this) + "\n";
+        return adapter.toJson(this);
       } catch (Exception e) {
         // For debugging purposes, show in the console _why_ this fails
         // Otherwise we'll just get an error 500 from the API in integration
