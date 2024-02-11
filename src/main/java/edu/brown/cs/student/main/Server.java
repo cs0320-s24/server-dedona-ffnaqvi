@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import spark.Spark;
 
@@ -35,6 +36,9 @@ public class Server {
   public static void main(String[] args) throws IOException {
 
     int port = 3232;
+    int loadStatus = -1;
+    List<List<String>> csvData = new ArrayList<>();
+
     Spark.port(port);
 
     after(
@@ -65,9 +69,10 @@ public class Server {
     //Setting up the handler for the GET /order and /activity endpoints
 //    Spark.get("income", new IncomeHandler());
     Spark.get("census", new CensusHandler());
-    Spark.get("loadCSV", new LoadCSVHandler());
-    Spark.get("viewCSV", new ViewCSVHandler());
-    Spark.get("searchCSV", new SearchCSVHandler());
+    Spark.get("loadCSV", new LoadCSVHandler(loadStatus, csvData));
+    System.out.println(loadStatus);
+    Spark.get("viewCSV", new ViewCSVHandler(loadStatus, csvData));
+    Spark.get("searchCSV", new SearchCSVHandler(loadStatus, csvData));
 
     Spark.init();
     Spark.awaitInitialization();
