@@ -13,13 +13,6 @@ import java.util.Map;
 
 public class SearchCSVHandler implements Route {
 
-  private static int status;
-  private List<List<String>> csvData;
-
-  public SearchCSVHandler(/*int loadStatus,*/ List<List<String>> pCsvData) {
-//    status = loadStatus;
-    this.csvData = pCsvData;
-  }
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
    * the unordered set of recipe cards.
@@ -45,7 +38,7 @@ public class SearchCSVHandler implements Route {
       //TODO: handle searching and printing the CSV data
 //      return new SearchDataSuccessResponse();
     }
-    if (this.status != 200) {
+    if (Server.loadStatus != 200) {
       return new SearchDataFailureResponse("The CSV has not been loaded yet").serialize();
 
     }

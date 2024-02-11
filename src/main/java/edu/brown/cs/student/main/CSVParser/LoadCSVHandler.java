@@ -15,13 +15,6 @@ import java.io.Reader;
 import java.util.List;
 
 public class LoadCSVHandler implements Route {
-//  private static int status;
-  private List<List<String>> csvData;
-
-  public LoadCSVHandler(/*int loadStatus,*/ List<List<String>> pCsvData) {
-//    status = loadStatus;
-    this.csvData = pCsvData;
-  }
 
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
@@ -45,9 +38,9 @@ public class LoadCSVHandler implements Route {
                     new FileReader(fileName));
     CSVParser<List<String>> parser = new CSVParser<>(reader, creator);
     parser.parse();
-    this.csvData = parser.getParsedData();
+    Server.csvData = parser.getParsedData();
 
-    if (!csvData.isEmpty()) {
+    if (!Server.csvData.isEmpty()) {
       Server.loadStatus = 200; //success code
       return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
     }

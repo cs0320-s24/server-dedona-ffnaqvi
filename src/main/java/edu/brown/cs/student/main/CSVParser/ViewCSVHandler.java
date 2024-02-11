@@ -7,20 +7,10 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ViewCSVHandler implements Route {
 
-  private static int status;
-  private List<List<String>> csvData;
-
-  public ViewCSVHandler(/*int loadStatus,*/ List<List<String>> pCsvData) {
-//    status = loadStatus;
-    System.out.println("variable status in View is:" + Server.loadStatus);
-    this.csvData = pCsvData;
-  }
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
    * the unordered set of recipe cards.
@@ -37,8 +27,7 @@ public class ViewCSVHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
 
     if (Server.loadStatus == 200) {
-      System.out.println(this.csvData);
-      return new ViewDataSuccessResponse(this.csvData).serialize();
+      return new ViewDataSuccessResponse(Server.csvData).serialize();
     }
 
     else {
@@ -66,7 +55,7 @@ public class ViewCSVHandler implements Route {
         // Initialize Moshi which takes in this class and returns it as JSON!
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ViewDataSuccessResponse> adapter = moshi.adapter(ViewDataSuccessResponse.class);
-        return adapter.toJson(this);
+        return adapter.toJson(this) + "\n";
       } catch (Exception e) {
         // For debugging purposes, show in the console _why_ this fails
         // Otherwise we'll just get an error 500 from the API in integration

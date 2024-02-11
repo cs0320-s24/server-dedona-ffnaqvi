@@ -28,7 +28,7 @@ public class Server {
    */
   public static int loadStatus;
 
-  private static List<List<String>> csvData;
+  public static List<List<String>> csvData;
 
   public static void main(String[] args) throws IOException {
 
@@ -46,11 +46,10 @@ public class Server {
 
     //Setting up the handler for the GET /order and /activity endpoints
     Spark.get("census", new CensusHandler());
-    Spark.get("loadCSV", new LoadCSVHandler(csvData));
-    System.out.println("status in server:" + loadStatus);
+    Spark.get("loadCSV", new LoadCSVHandler());
 
-    Spark.get("viewCSV", new ViewCSVHandler(csvData));
-    Spark.get("searchCSV", new SearchCSVHandler(csvData));
+    Spark.get("viewCSV", new ViewCSVHandler());
+    Spark.get("searchCSV", new SearchCSVHandler());
 
     Spark.init();
     Spark.awaitInitialization();
