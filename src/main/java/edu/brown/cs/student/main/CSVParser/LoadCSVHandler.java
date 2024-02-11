@@ -38,6 +38,7 @@ public class LoadCSVHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
 
     String fileName = request.queryParams("fileName");
+
     CreatorFromRow<List<String>> creator = new ListStringCreator();
     Reader reader =
             new BufferedReader(
