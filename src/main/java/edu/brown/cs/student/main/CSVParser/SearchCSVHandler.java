@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchCSVHandler implements Route {
+  private List<List<String>> csvData;
 
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
@@ -62,8 +63,9 @@ public class SearchCSVHandler implements Route {
                 columnNameIdentifier, columnIndexIdentifier);
         Search search = new Search(Server.parser, searchValue, columnIdentifier, hasHeaders);
         search.search();
-        List<List<String>> searchResults = search.getResultList();
-        return new SearchDataSuccessResponse(searchResults).serialize();
+        this.csvData = search.getResultList();
+        System.out.println(this.csvData);
+        return new SearchDataSuccessResponse(this.csvData).serialize();
       }
       catch (Exception e) {
         // Handle any other unexpected exceptions
@@ -85,7 +87,7 @@ public class SearchCSVHandler implements Route {
    */
 
   /** Response object to send, containing a soup with certain ingredients in it */
-  public record SearchDataSuccessResponse(String response_type, List<List<String>> responseMap) {
+  public record SearchDataSuccessResponse(String response_type, List<List<String>> responseData) {
     public SearchDataSuccessResponse(List<List<String>> responseData) {
       this("success", responseData);
     }
@@ -95,6 +97,7 @@ public class SearchCSVHandler implements Route {
     String serialize() {
       try {
         // Initialize Moshi which takes in this class and returns it as JSON!
+        System.out.println("success in Moshi");
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<SearchDataSuccessResponse> adapter = moshi.adapter(SearchDataSuccessResponse.class);
         return adapter.toJson(this);

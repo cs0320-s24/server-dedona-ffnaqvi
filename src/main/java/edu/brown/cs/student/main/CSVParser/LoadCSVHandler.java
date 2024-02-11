@@ -16,6 +16,7 @@ import java.util.List;
 
 public class LoadCSVHandler implements Route {
 
+  private List<List<String>> csvData;
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
    * the unordered set of recipe cards.
@@ -39,9 +40,9 @@ public class LoadCSVHandler implements Route {
                     new FileReader(fileName));
     Server.parser = new CSVParser<>(reader, creator);
     Server.parser.parse();
-    Server.csvData = Server.parser.getParsedData();
+    this.csvData = Server.parser.getParsedData();
 
-    if (!Server.csvData.isEmpty()) {
+    if (!this.csvData.isEmpty()) {
       Server.loadStatus = 200; //success code
       return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
     }

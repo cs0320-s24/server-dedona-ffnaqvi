@@ -10,6 +10,7 @@ import spark.Route;
 import java.util.List;
 
 public class ViewCSVHandler implements Route {
+  private List<List<String>> csvData;
 
   /**
    * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
@@ -27,10 +28,11 @@ public class ViewCSVHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
 
     if (Server.loadStatus == 200) {
-      String[][] parsedData = new String[Server.csvData.size()][Server.csvData.get(0).size()];
+      this.csvData = Server.parser.getParsedData();
+      String[][] parsedData = new String[this.csvData.size()][this.csvData.get(0).size()];
       for (int r = 0; r < parsedData.length; r ++) {
         for (int c = 0; c < parsedData[0].length; c++) {
-          parsedData[r][c] = Server.csvData.get(r).get(c);
+          parsedData[r][c] = this.csvData.get(r).get(c);
         }
       }
       return new ViewDataSuccessResponse(parsedData).serialize();

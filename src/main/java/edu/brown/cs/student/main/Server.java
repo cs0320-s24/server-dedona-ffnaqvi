@@ -28,8 +28,6 @@ public class Server {
   public static int loadStatus;
   public static CSVParser<List<String>> parser;
 
-  public static List<List<String>> csvData;
-
   public static void main(String[] args) throws IOException {
 
     int port = 3232;
