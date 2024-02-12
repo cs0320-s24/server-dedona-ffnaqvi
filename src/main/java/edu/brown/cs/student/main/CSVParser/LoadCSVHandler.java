@@ -38,6 +38,7 @@ public class LoadCSVHandler implements Route {
     Reader reader =
             new BufferedReader(
                     new FileReader(fileName));
+    Server.fileName = fileName;
     Server.parser = new CSVParser<>(reader, creator);
     Server.parser.parse();
     this.csvData = Server.parser.getParsedData();

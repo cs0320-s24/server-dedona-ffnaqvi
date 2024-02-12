@@ -9,7 +9,6 @@ import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
 import edu.brown.cs.student.main.Census.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import spark.Spark;
 
@@ -27,6 +26,7 @@ public class Server {
    */
   public static int loadStatus;
   public static CSVParser<List<String>> parser;
+  public static String fileName;
 
   public static void main(String[] args) throws IOException {
 

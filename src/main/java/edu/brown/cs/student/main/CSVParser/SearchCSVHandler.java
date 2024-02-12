@@ -2,12 +2,15 @@ package edu.brown.cs.student.main.CSVParser;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import edu.brown.cs.student.main.Creators.ListStringCreator;
 import edu.brown.cs.student.main.Search.Search;
 import edu.brown.cs.student.main.Server;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +64,10 @@ public class SearchCSVHandler implements Route {
         System.out.println("hasHeaders: " + hasHeaders);
         Map.Entry<String, Integer> columnIdentifier = new AbstractMap.SimpleEntry<>(
                 columnNameIdentifier, columnIndexIdentifier);
-        Search search = new Search(Server.parser, searchValue, columnIdentifier, hasHeaders);
+        CSVParser<List<String>> parser = new CSVParser<>(
+                new BufferedReader(new FileReader(Server.fileName)),
+                new ListStringCreator());
+        Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
         search.search();
         this.csvData = search.getResultList();
         for (List<String> rowData : this.csvData) {
@@ -102,7 +108,6 @@ public class SearchCSVHandler implements Route {
     String serialize() {
       try {
         // Initialize Moshi which takes in this class and returns it as JSON!
-        System.out.println("success in Moshi");
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<SearchDataSuccessResponse> adapter = moshi.adapter(SearchDataSuccessResponse.class);
         return adapter.toJson(this);
