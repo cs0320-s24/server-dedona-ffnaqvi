@@ -41,6 +41,7 @@ public class LoadCSVHandler implements Route {
     try {
       Server.parser = new CSVParser<>(reader, creator);
       Server.parser.parse();
+      System.out.println("CSV Parser initialized successfully.");
       this.csvData = Server.parser.getParsedData();
 
       if (!this.csvData.isEmpty()) {
