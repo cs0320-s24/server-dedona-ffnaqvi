@@ -32,16 +32,11 @@ public class LoadCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-      String fileName = request.queryParams("fileName");
+    String fileName = request.queryParams("fileName");
 
     CreatorFromRow<List<String>> creator = new ListStringCreator();
     Reader reader =
-            new BufferedReader(
-                    new FileReader(fileName));
-    Server.fileName = fileName;
-    Server.parser = new CSVParser<>(reader, creator);
-    Server.parser.parse();
-    this.csvData = Server.parser.getParsedData();
+            new BufferedReader(new FileReader(fileName));
 
     try {
       Server.parser = new CSVParser<>(reader, creator);
