@@ -23,14 +23,10 @@ public class Server {
         `loadcsv`
         `viewcsv`
         `searchcsv`
-
-
   Once you have server, should instantiate all of the endpoints to be using; each endpoint (aka handler, should have its own class that should implement spark route)
    */
   public static int loadStatus;
-
-  private static List<List<String>> csvData;
-  private static CSVParser<List<String>> csvParserData;
+  public static CSVParser<List<String>> parser;
 
   public static void main(String[] args) throws IOException {
 
@@ -48,11 +44,10 @@ public class Server {
 
     //Setting up the handler for the GET /order and /activity endpoints
     Spark.get("census", new CensusHandler());
-    Spark.get("loadCSV", new LoadCSVHandler(csvData,csvParserData));
-    System.out.println("status in server:" + loadStatus);
+    Spark.get("loadCSV", new LoadCSVHandler());
 
-    Spark.get("viewCSV", new ViewCSVHandler(csvData));
-    Spark.get("searchCSV", new SearchCSVHandler(csvData,csvParserData));
+    Spark.get("viewCSV", new ViewCSVHandler());
+    Spark.get("searchCSV", new SearchCSVHandler());
 
     Spark.init();
     Spark.awaitInitialization();
