@@ -62,6 +62,9 @@ public class CSVParser<T> {
         line = bufferedReader.readLine();
       }
     }
+    catch (IOException e) {
+      System.out.println("Error reading from the CSV file: " + e.getMessage());
+    }
   }
 
   /**
