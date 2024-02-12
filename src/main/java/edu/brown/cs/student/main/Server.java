@@ -28,6 +28,7 @@ public class Server {
   public static CSVParser<List<String>> parser;
   public static String fileName;
 
+
   public static void main(String[] args) throws IOException {
 
     int port = 3232;
@@ -44,6 +45,7 @@ public class Server {
 
     //Setting up the handler for the GET /order and /activity endpoints
     Spark.get("census", new CensusHandler());
+
     Spark.get("loadCSV", new LoadCSVHandler());
 
     Spark.get("viewCSV", new ViewCSVHandler());

@@ -32,7 +32,7 @@ public class LoadCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-    String fileName = request.queryParams("fileName");
+      String fileName = request.queryParams("fileName");
 
     CreatorFromRow<List<String>> creator = new ListStringCreator();
     Reader reader =
@@ -43,13 +43,29 @@ public class LoadCSVHandler implements Route {
     Server.parser.parse();
     this.csvData = Server.parser.getParsedData();
 
-    if (!this.csvData.isEmpty()) {
-      Server.loadStatus = 200; //success code
-      return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
+    try {
+      Server.parser = new CSVParser<>(reader, creator);
+      Server.parser.parse();
+      System.out.println("CSV Parser initialized successfully.");
+      this.csvData = Server.parser.getParsedData();
+
+      if (!this.csvData.isEmpty()) {
+        Server.loadStatus = 200; //success code
+        return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
+      } else {
+        Server.loadStatus = -1;
+        return new LoadNoDataFailureResponse().serialize();
+      }
     }
-    else {
-      Server.loadStatus = -1;
-      return new LoadNoDataFailureResponse().serialize();
+    finally
+    {
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+    }
     }
 
   }

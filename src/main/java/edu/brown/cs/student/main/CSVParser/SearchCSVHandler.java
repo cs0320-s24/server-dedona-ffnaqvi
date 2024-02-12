@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.Creators.ListStringCreator;
 import edu.brown.cs.student.main.Search.Search;
 import edu.brown.cs.student.main.Server;
+import java.io.BufferedReader;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -58,7 +59,7 @@ public class SearchCSVHandler implements Route {
 
       try {
         //TODO: handle searching and printing the CSV data
-        System.out.println("searchValue: " + searchValue);
+         System.out.println("searchValue: " + searchValue);
         System.out.println("columnNameIdentifier: " + columnNameIdentifier);
         System.out.println("columnIndexIdentifier: " + columnIndexIdentifier);
         System.out.println("hasHeaders: " + hasHeaders);
@@ -69,6 +70,7 @@ public class SearchCSVHandler implements Route {
                 new ListStringCreator());
         Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
         search.search();
+
         this.csvData = search.getResultList();
         for (List<String> rowData : this.csvData) {
           for (String data : rowData) {
