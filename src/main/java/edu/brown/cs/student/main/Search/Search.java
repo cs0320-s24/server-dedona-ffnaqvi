@@ -77,6 +77,8 @@ public class Search {
     } catch (IOException e) {
       // Handle the IOException according to your error handling strategy
       System.out.println("Error in Searching");
+      e.printStackTrace();
+      System.out.println("Error in Searching: " + e.getMessage());
     }
   }
 
