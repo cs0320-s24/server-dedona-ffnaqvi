@@ -37,7 +37,8 @@ public class CSVParser<T> {
    * @throws IOException If an I/O error occurs while reading the CSV data.
    */
   public void parse() throws IOException {
-    try (BufferedReader bufferedReader = new BufferedReader(this.reader)) {
+    BufferedReader bufferedReader = new BufferedReader(this.reader);
+    try {
       String line = bufferedReader.readLine();
       int initColSize = -1;
 
@@ -62,9 +63,13 @@ public class CSVParser<T> {
         line = bufferedReader.readLine();
       }
     }
-    catch (IOException e) {
-      System.out.println("Error reading from the CSV file: " + e.getMessage());
-    }
+//    catch (IOException e) {
+//      System.out.println("Error reading from the CSV file: " + e.getMessage());
+//    }
+    finally {
+    // Close the BufferedReader in the finally block to ensure it's closed
+    bufferedReader.close();
+  }
   }
 
   /**

@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.Search.Search;
 import edu.brown.cs.student.main.Server;
+import java.io.BufferedReader;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -61,8 +62,10 @@ public class SearchCSVHandler implements Route {
         System.out.println("hasHeaders: " + hasHeaders);
         Map.Entry<String, Integer> columnIdentifier = new AbstractMap.SimpleEntry<>(
                 columnNameIdentifier, columnIndexIdentifier);
+        System.out.println("Before accessing Server.parser in SearchCSVHandler");
         Search search = new Search(Server.parser, searchValue, columnIdentifier, hasHeaders);
         search.search();
+        System.out.println("After accessing Server.parser in SearchCSVHandler");
         this.csvData = search.getResultList();
         for (List<String> rowData : this.csvData) {
           for (String data : rowData) {

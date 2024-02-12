@@ -8,7 +8,10 @@ import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
 import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
 import edu.brown.cs.student.main.Census.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import spark.Spark;
@@ -28,6 +31,7 @@ public class Server {
   public static int loadStatus;
   public static CSVParser<List<String>> parser;
 
+
   public static void main(String[] args) throws IOException {
 
     int port = 3232;
@@ -44,6 +48,7 @@ public class Server {
 
     //Setting up the handler for the GET /order and /activity endpoints
     Spark.get("census", new CensusHandler());
+
     Spark.get("loadCSV", new LoadCSVHandler());
 
     Spark.get("viewCSV", new ViewCSVHandler());

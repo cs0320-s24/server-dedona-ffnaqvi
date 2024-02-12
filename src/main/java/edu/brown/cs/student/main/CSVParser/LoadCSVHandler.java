@@ -36,19 +36,31 @@ public class LoadCSVHandler implements Route {
 
     CreatorFromRow<List<String>> creator = new ListStringCreator();
     Reader reader =
-            new BufferedReader(
-                    new FileReader(fileName));
-    Server.parser = new CSVParser<>(reader, creator);
-    Server.parser.parse();
-    this.csvData = Server.parser.getParsedData();
+            new BufferedReader(new FileReader(fileName));
 
-    if (!this.csvData.isEmpty()) {
-      Server.loadStatus = 200; //success code
-      return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
+    try {
+      Server.parser = new CSVParser<>(reader, creator);
+      Server.parser.parse();
+      System.out.println("CSV Parser initialized successfully.");
+      this.csvData = Server.parser.getParsedData();
+
+      if (!this.csvData.isEmpty()) {
+        Server.loadStatus = 200; //success code
+        return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
+      } else {
+        Server.loadStatus = -1;
+        return new LoadNoDataFailureResponse().serialize();
+      }
     }
-    else {
-      Server.loadStatus = -1;
-      return new LoadNoDataFailureResponse().serialize();
+    finally
+    {
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+    }
     }
 
   }
