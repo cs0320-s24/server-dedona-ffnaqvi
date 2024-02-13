@@ -39,7 +39,7 @@ public class CensusHandler implements Route {
    * @param response The response object providing functionality for modifying the response
    */
   @Override
-  public Object handle(Request request, Response response) {
+  public Object handle(Request request, Response response) throws IOException {
     // If you are interested in how parameters are received, try commenting out and
     // printing these lines! Notice that requesting a specific parameter requires that parameter
     // to be fulfilled.
@@ -49,8 +49,10 @@ public class CensusHandler implements Route {
     Set<String> params = request.queryParams();
     //     System.out.println(params);
     String state = request.queryParams("state");
+    System.out.println("State: "+state);
+
     String county = request.queryParams("county");
-    //     System.out.println(participants);
+    System.out.println("County: "+county);
 
     String stateCode = this.stateCodes.get(state);
     String countyCode = getCountyCodes(stateCode,county);
@@ -96,6 +98,7 @@ public class CensusHandler implements Route {
 
     System.out.println(sentCensusApiResponse);
     System.out.println(sentCensusApiResponse.body());
+    System.out.println("before returning from sendRequest");
 
     return sentCensusApiResponse.body();
   }
@@ -142,7 +145,7 @@ public class CensusHandler implements Route {
     return codes;
   }
 
-  private String getCountyCodes(String stateCode, String targetCounty) {
+  private String getCountyCodes(String stateCode, String targetCounty) throws IOException {
     try {
       // Send a request to the API to get county names and codes for a specific state
       HttpRequest request = HttpRequest.newBuilder()
@@ -159,8 +162,12 @@ public class CensusHandler implements Route {
       );
       List<List<String>> data = adapter.fromJson(response.body());
 
+      // Debug prints
+      System.out.println("Data: " + data);
+
       // Assuming the first list element is the header
       List<String> header = data.get(0);
+      System.out.println("Header: " + header);
       int countyIndex = header.indexOf("county");
       int nameIndex = header.indexOf("NAME");
 
@@ -168,7 +175,18 @@ public class CensusHandler implements Route {
       if (data != null) {
         for (int i = 1; i < data.size(); i++) { // Start from 1 to skip the header
           List<String> entry = data.get(i);
-          if (entry.get(nameIndex).equalsIgnoreCase(targetCounty)) {
+
+          // Extract the county name from the full string "<county>, <state>"
+          String countyFullName = entry.get(nameIndex);
+
+          // ,:    This part of the regular expression matches a literal comma.
+          // \\s*: This part matches zero or more whitespace characters.
+          String[] parts = countyFullName.split(",\\s*");
+          String countyName = parts[0];
+
+          // Compare the extracted county name with the target county
+          if (countyName.equalsIgnoreCase(targetCounty)) {
+            System.out.println("Found county!");
             return entry.get(countyIndex);
           }
         }
@@ -179,7 +197,8 @@ public class CensusHandler implements Route {
     }
 
     // Return null if the county is not found
-    return null;
+    throw new IOException("No found county");
 
 }
+
 }
