@@ -2,17 +2,17 @@ package edu.brown.cs.student.main.CSVParser;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import edu.brown.cs.student.main.Creators.ListStringCreator;
 import edu.brown.cs.student.main.Search.Search;
-import edu.brown.cs.student.main.Server;
+import edu.brown.cs.student.main.server.Server;
 import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.AbstractMap;
+import java.util.List;
+import java.util.Map;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class SearchCSVHandler implements Route {
   private List<List<String>> csvData;
@@ -42,40 +42,39 @@ public class SearchCSVHandler implements Route {
 
       try {
         columnNameIdentifier = request.queryParams("columnNameIdentifier");
-      }
-      catch (NullPointerException e) {
+      } catch (NullPointerException e) {
         columnNameIdentifier = null;
       }
 
       try {
         columnIndexIdentifier = Integer.parseInt(request.queryParams("columnIndexIdentifier"));
-      }
-      catch (NullPointerException | NumberFormatException e) {
+      } catch (NullPointerException | NumberFormatException e) {
         columnIndexIdentifier = null;
       }
 
       try {
-        //TODO: handle searching and printing the CSV data
+        // TODO: handle searching and printing the CSV data
         System.out.println("searchValue: " + searchValue);
         System.out.println("columnNameIdentifier: " + columnNameIdentifier);
         System.out.println("columnIndexIdentifier: " + columnIndexIdentifier);
         System.out.println("hasHeaders: " + hasHeaders);
-        Map.Entry<String, Integer> columnIdentifier = new AbstractMap.SimpleEntry<>(
-                columnNameIdentifier, columnIndexIdentifier);
-        System.out.println("Before accessing Server.parser in SearchCSVHandler");
-        Search search = new Search(Server.parser, searchValue, columnIdentifier, hasHeaders);
+        Map.Entry<String, Integer> columnIdentifier =
+                new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
+        CSVParser<List<String>> parser =
+                new CSVParser<>(
+                        new BufferedReader(new FileReader(Server.fileName)), new ListStringCreator());
+        Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
         search.search();
-        System.out.println("After accessing Server.parser in SearchCSVHandler");
+
         this.csvData = search.getResultList();
         for (List<String> rowData : this.csvData) {
           for (String data : rowData) {
-            System.out.println("->"+data);
+            System.out.println("->" + data);
           }
         }
         System.out.println(this.csvData);
         return new SearchDataSuccessResponse(this.csvData).serialize();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         // Handle any other unexpected exceptions
         e.printStackTrace();
         throw new RuntimeException("Unexpected error during processing: " + e.getMessage());
@@ -83,7 +82,6 @@ public class SearchCSVHandler implements Route {
     }
     if (Server.loadStatus != 200) {
       return new SearchDataFailureResponse("The CSV has not been loaded yet").serialize();
-
     }
     return new SearchDataFailureResponse().serialize();
   }
@@ -105,16 +103,17 @@ public class SearchCSVHandler implements Route {
     String serialize() {
       try {
         // Initialize Moshi which takes in this class and returns it as JSON!
-        System.out.println("success in Moshi");
         Moshi moshi = new Moshi.Builder().build();
-        JsonAdapter<SearchDataSuccessResponse> adapter = moshi.adapter(SearchDataSuccessResponse.class);
+        JsonAdapter<SearchDataSuccessResponse> adapter =
+                moshi.adapter(SearchDataSuccessResponse.class);
         return adapter.toJson(this);
       } catch (Exception e) {
         // For debugging purposes, show in the console _why_ this fails
         // Otherwise we'll just get an error 500 from the API in integration
         // testing.
         e.printStackTrace();
-        throw new RuntimeException("Error during Moshi serialization: " + e.getMessage());      }
+        throw new RuntimeException("Error during Moshi serialization: " + e.getMessage());
+      }
     }
   }
 

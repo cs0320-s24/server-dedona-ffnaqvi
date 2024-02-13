@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main;
+package edu.brown.cs.student.main.server;
 
 import static spark.Spark.after;
 
@@ -7,12 +7,7 @@ import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
 import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
 import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
 import edu.brown.cs.student.main.Census.*;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 import spark.Spark;
 
@@ -30,6 +25,7 @@ public class Server {
    */
   public static int loadStatus;
   public static CSVParser<List<String>> parser;
+  public static String fileName;
 
   public static void main(String[] args) throws IOException {
 
@@ -38,14 +34,14 @@ public class Server {
     Spark.port(port);
 
     after(
-        (request, response) -> {
-          // TODO: By setting the Access-Control-Allow-Origin header to "*", we allow requests from
-          // any origin.
-          response.header("Access-Control-Allow-Origin", "*");
-          response.header("Access-Control-Allow-Methods", "*");
-        });
+            (request, response) -> {
+              // TODO: By setting the Access-Control-Allow-Origin header to "*", we allow requests from
+              // any origin.
+              response.header("Access-Control-Allow-Origin", "*");
+              response.header("Access-Control-Allow-Methods", "*");
+            });
 
-    //Setting up the handler for the GET /order and /activity endpoints
+    // Setting up the handler for the GET /order and /activity endpoints
     Spark.get("census", new CensusHandler());
 
     Spark.get("loadCSV", new LoadCSVHandler());
@@ -58,5 +54,11 @@ public class Server {
 
     // Notice this link alone leads to a 404... Why is that?
     System.out.println("Server started at http://localhost:" + port);
+    System.out.println(
+            "To load a CSV, go to the path /loadCSV and enter the fileName "
+                    + "as a parameter.\nTo view a CSV, go to the /viewCSV path. To search a CSV, "
+                    + "go to the /searchCSV path, followed by the parameters for searching \n(searchValue, "
+                    + "columnIdentifier or columnNumber, and a boolean for \nwhether or not the data"
+                    + "contains headers). To connect to the US Census API, go to the path /census.");
   }
 }
