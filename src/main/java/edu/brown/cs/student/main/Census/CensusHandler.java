@@ -162,12 +162,8 @@ public class CensusHandler implements Route {
       );
       List<List<String>> data = adapter.fromJson(response.body());
 
-      // Debug prints
-      System.out.println("Data: " + data);
-
       // Assuming the first list element is the header
       List<String> header = data.get(0);
-      System.out.println("Header: " + header);
       int countyIndex = header.indexOf("county");
       int nameIndex = header.indexOf("NAME");
 
