@@ -4,9 +4,14 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.Creators.ListStringCreator;
 import edu.brown.cs.student.main.Search.Search;
-import edu.brown.cs.student.main.server.Server;
 import java.io.BufferedReader;
 import java.io.FileReader;
+
+import edu.brown.cs.student.main.server.Server;
+import spark.Request;
+import spark.Response;
+import spark.Route;
+
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -59,13 +64,13 @@ public class SearchCSVHandler implements Route {
         System.out.println("columnIndexIdentifier: " + columnIndexIdentifier);
         System.out.println("hasHeaders: " + hasHeaders);
         Map.Entry<String, Integer> columnIdentifier =
-                new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
+            new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
         CSVParser<List<String>> parser =
-                new CSVParser<>(
-                        new BufferedReader(new FileReader(Server.fileName)), new ListStringCreator());
+            new CSVParser<>(
+                new BufferedReader(new FileReader(Server.fileName)), new ListStringCreator());
         Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
-        search.search();
 
+        search.search();
         this.csvData = search.getResultList();
         for (List<String> rowData : this.csvData) {
           for (String data : rowData) {
@@ -105,7 +110,7 @@ public class SearchCSVHandler implements Route {
         // Initialize Moshi which takes in this class and returns it as JSON!
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<SearchDataSuccessResponse> adapter =
-                moshi.adapter(SearchDataSuccessResponse.class);
+            moshi.adapter(SearchDataSuccessResponse.class);
         return adapter.toJson(this);
       } catch (Exception e) {
         // For debugging purposes, show in the console _why_ this fails

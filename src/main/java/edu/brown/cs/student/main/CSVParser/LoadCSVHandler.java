@@ -5,13 +5,14 @@ import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.Creators.CreatorFromRow;
 import edu.brown.cs.student.main.Creators.ListStringCreator;
 import edu.brown.cs.student.main.server.Server;
+import spark.Request;
+import spark.Response;
+import spark.Route;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.List;
-import spark.Request;
-import spark.Response;
-import spark.Route;
 
 public class LoadCSVHandler implements Route {
 
@@ -44,21 +45,24 @@ public class LoadCSVHandler implements Route {
       this.csvData = Server.parser.getParsedData();
 
       if (!this.csvData.isEmpty()) {
-        Server.loadStatus = 200; // success code
+        Server.loadStatus = 200; //success code
         return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
       } else {
         Server.loadStatus = -1;
         return new LoadNoDataFailureResponse().serialize();
       }
-    } finally {
+    }
+    finally
+    {
       if (reader != null) {
         try {
           reader.close();
         } catch (Exception e) {
           e.printStackTrace();
         }
-      }
     }
+    }
+
   }
 
   /*
