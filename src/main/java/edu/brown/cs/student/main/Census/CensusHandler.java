@@ -22,7 +22,6 @@ public class CensusHandler implements Route {
 
   private String apiKey = "c4dae4f067d4a604595239338bf6e62c93bcdc34";
   private Map<String, String> stateCodes;
-  private Map<String, String> countyCodes;
 
   public CensusHandler() {
     // Initialize the stateCodes map when the handler is created
@@ -54,8 +53,7 @@ public class CensusHandler implements Route {
     //     System.out.println(participants);
 
     String stateCode = this.stateCodes.get(state);
-    this.countyCodes = getCountyCodes(stateCode);
-    String countyCode = this.countyCodes.get(county);
+    String countyCode = getCountyCodes(stateCode,county);
 
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
@@ -85,10 +83,10 @@ public class CensusHandler implements Route {
     // on participant number?
     HttpRequest buildCensusApiRequest =
         HttpRequest.newBuilder()
-            .uri(new URI("api.census.gov/data/2022/acs/acs1?get=NAME,group(B01001)&for=us:1&key="+this.apiKey+"&state=" + stateCode + "&county=" + countyCode))
-            //.uri(new URI("api.census.gov/data/2018/pep/charagegroups?state="+state+"&county="+county))
+            .uri(new URI("https://api.census.gov/data/2021/acs/acs1/subject/variables?get=NAME,S2802_C03_022E&for=county:"+ countyCode + "&in=state:" + stateCode))
             .GET()
             .build();
+
 
     // Send that API request then store the response in this variable. Note the generic type.
     HttpResponse<String> sentCensusApiResponse =
@@ -144,9 +142,7 @@ public class CensusHandler implements Route {
     return codes;
   }
 
-  private Map<String, String> getCountyCodes(String stateCode) {
-    Map<String, String> codes = new HashMap<>();
-
+  private String getCountyCodes(String stateCode, String targetCounty) {
     try {
       // Send a request to the API to get county names and codes for a specific state
       HttpRequest request = HttpRequest.newBuilder()
@@ -158,15 +154,23 @@ public class CensusHandler implements Route {
 
       // Parse the JSON response
       Moshi moshi = new Moshi.Builder().build();
-      JsonAdapter<List<Map<String, String>>> adapter = moshi.adapter(
-          Types.newParameterizedType(List.class, Map.class, String.class, String.class)
+      JsonAdapter<List<List<String>>> adapter = moshi.adapter(
+          Types.newParameterizedType(List.class, List.class, String.class)
       );
-      List<Map<String, String>> data = adapter.fromJson(response.body());
+      List<List<String>> data = adapter.fromJson(response.body());
 
-      // Populate the countyCodes map
+      // Assuming the first list element is the header
+      List<String> header = data.get(0);
+      int countyIndex = header.indexOf("county");
+      int nameIndex = header.indexOf("NAME");
+
+      // Find the county code based on the target county
       if (data != null) {
-        for (Map<String, String> entry : data) {
-          codes.put(entry.get("NAME"), entry.get("county"));
+        for (int i = 1; i < data.size(); i++) { // Start from 1 to skip the header
+          List<String> entry = data.get(i);
+          if (entry.get(nameIndex).equalsIgnoreCase(targetCounty)) {
+            return entry.get(countyIndex);
+          }
         }
       }
     } catch (IOException | InterruptedException | URISyntaxException e) {
@@ -174,7 +178,8 @@ public class CensusHandler implements Route {
       // Handle the exception as needed
     }
 
-    return codes;
-  }
+    // Return null if the county is not found
+    return null;
 
+}
 }
