@@ -53,8 +53,9 @@ public class CensusHandler implements Route {
     String county = request.queryParams("county");
     //     System.out.println(participants);
 
-    String stateCode = stateCodes.get(state);
-    String countyCode = countyCodes.get(county);
+    String stateCode = this.stateCodes.get(state);
+    this.countyCodes = getCountyCodes(stateCode);
+    String countyCode = this.countyCodes.get(county);
 
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
@@ -123,12 +124,16 @@ public class CensusHandler implements Route {
       // Populate the stateCodes map
       if (data != null && data.size() > 1) {
         List<String> header = data.get(0); // Assuming the first element is the header
-        int stateIndex = header.indexOf("state");
+        // Finds the index of the column named "state" in the header.
+        // The indexOf method returns the index of the first occurrence of the specified element in the list.
+        int stateIdIndex = header.indexOf("state");
+        // Finds the index of the column named "NAME" in the header.
+        // Similar to the previous line, it searches for the index of "NAME" in the header.
         int nameIndex = header.indexOf("NAME");
 
         for (int i = 1; i < data.size(); i++) {
           List<String> entry = data.get(i);
-          codes.put(entry.get(nameIndex), entry.get(stateIndex));
+          codes.put(entry.get(nameIndex), entry.get(stateIdIndex));
         }
       }
     } catch (IOException | InterruptedException | URISyntaxException e) {
