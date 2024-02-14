@@ -28,8 +28,9 @@ public class CensusAPIUtilities {
       if (!censusData.isEmpty()) {
         List<String> firstList = censusData.get(1); //skip the headers
         if (firstList.size() >= 3) {
-          census.setState(firstList.get(2));
-          census.setCounty(firstList.get(3));
+          String[] parts = firstList.get(0).split(",\\s*");
+          census.setCounty(parts[0]);
+          census.setState(parts[1]);
           try {
             census.setPercentageOfAccess(Double.parseDouble(firstList.get(1)));
           } catch (NumberFormatException e) {
