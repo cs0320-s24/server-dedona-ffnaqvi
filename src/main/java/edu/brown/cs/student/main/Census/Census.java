@@ -12,4 +12,16 @@ public class Census {
   public String toString() {
     return this.county + ", " + this.state + " results: " + this.S2802_C03_022E;
   }
+
+  public void setState(String s) {
+    this.state = s;
+  }
+
+  public void setCounty(String s) {
+    this.county = s;
+  }
+
+  public void setPercentageOfAccess(int i) {
+    this.S2802_C03_022E = Integer.toString(i);
+  }
 }

@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class CensusAPIUtilities {
@@ -36,26 +37,29 @@ public class CensusAPIUtilities {
 //    }
     try {
       Moshi moshi = new Moshi.Builder().build();
-      JsonAdapter<Census> adapter = moshi.adapter(Census.class);
+      Type type = Types.newParameterizedType(List.class, Types.newParameterizedType(List.class, String.class));
+      JsonAdapter<List<List<String>>> adapter = moshi.adapter(type);
+      List<List<String>> listOfLists = adapter.fromJson(jsonCensus);
 
-      // Try deserializing as a single object
-      try {
-        return adapter.fromJson(jsonCensus);
-      } catch (IOException e) {
-        // If deserialization as object fails, try deserializing as an array
-        JsonAdapter<List<Census>> listAdapter = moshi.adapter(Types.newParameterizedType(List.class, Census.class));
-        List<Census> censusList = listAdapter.fromJson(jsonCensus);
-        if (censusList != null && !censusList.isEmpty()) {
-          // Return the first element of the array
-          return censusList.get(0);
-        } else {
-          // Handle empty or invalid array
-          return new Census();
+      // Extract values from listOfLists and populate a Census object
+      Census census = new Census();
+      if (!listOfLists.isEmpty()) {
+        List<String> firstList = listOfLists.get(0);
+        if (firstList.size() >= 3) {
+          census.setState(firstList.get(0));
+          census.setCounty(firstList.get(1));
+          try {
+            census.setPercentageOfAccess(Integer.parseInt(firstList.get(2)));
+          } catch (NumberFormatException e) {
+            // Handle parsing error if percentageOfAccess is not a valid integer
+          }
         }
       }
+
+      return census;
     } catch (IOException e) {
       e.printStackTrace();
-      return new Census();
+      return new Census(); // Return default Census if deserialization fails
     }
 
   }
