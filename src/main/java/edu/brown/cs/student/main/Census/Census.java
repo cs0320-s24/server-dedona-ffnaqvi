@@ -10,7 +10,7 @@ public class Census {
 
   @Override
   public String toString() {
-    return this.county + ", " + this.state + " has the estimated percent broadband internet subscription of: " + this.S2802_C03_022E + "%";
+    return "[" + this.county + ", " + this.state + " has the estimated percent broadband internet subscription of: " + this.S2802_C03_022E + "%" +"]\n";
   }
 
   public void setState(String s) {
