@@ -40,14 +40,7 @@ public class CensusHandler implements Route {
    */
   @Override
   public Object handle(Request request, Response response) throws IOException {
-    // If you are interested in how parameters are received, try commenting out and
-    // printing these lines! Notice that requesting a specific parameter requires that parameter
-    // to be fulfilled.
-    // If you specify a queryParam, you can access it by appending ?parameterName=name to the
-    // endpoint
-    // ex. http://localhost:3232/activity?participants=num
-    Set<String> params = request.queryParams();
-    //     System.out.println(params);
+
     String state = request.queryParams("state");
     System.out.println("State: "+state);
 
@@ -85,7 +78,7 @@ public class CensusHandler implements Route {
     // on participant number?
     HttpRequest buildCensusApiRequest =
         HttpRequest.newBuilder()
-            .uri(new URI("https://api.census.gov/data/2021/acs/acs1/subject/variables?get=NAME,S2802_C03_022E&for=county:"+ countyCode + "&in=state:" + stateCode))
+            .uri(new URI("https://api.census.gov/data/2021/acs/acs1/subject/variables?get=NAME,S2802_C03_022E&for=county:"+ countyCode + "&in=state:" + stateCode+"&key="+this.apiKey))
             .GET()
             .build();
 
