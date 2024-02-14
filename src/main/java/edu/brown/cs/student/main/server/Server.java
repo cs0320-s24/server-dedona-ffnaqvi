@@ -59,6 +59,7 @@ public class Server {
                     + "as a parameter.\nTo view a CSV, go to the /viewCSV path. To search a CSV, "
                     + "go to the /searchCSV path, followed by the parameters for searching \n(searchValue, "
                     + "columnIdentifier or columnNumber, and a boolean for \nwhether or not the data"
-                    + "contains headers). To connect to the US Census API, go to the path /broadband.");
+                    + "contains headers). To connect to the US Census API, go to the path /census.\n" +
+                    "inputting no county will result in a search for all counties in the specified state.");
   }
 }

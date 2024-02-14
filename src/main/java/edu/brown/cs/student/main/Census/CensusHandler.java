@@ -41,12 +41,19 @@ public class CensusHandler implements Route {
 
     String state = request.queryParams("state");
     System.out.println("State: "+state);
+    String stateCode = this.stateCodes.get(state);
+    String countyCode;
+
 
     String county = request.queryParams("county");
-    System.out.println("County: "+county);
+    if (county == null) {
+      county = "*";
+      countyCode = "*";
+    }
+    else {
+      countyCode = getCountyCodes(stateCode,county);
+    }
 
-    String stateCode = this.stateCodes.get(state);
-    String countyCode = getCountyCodes(stateCode,county);
 
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
