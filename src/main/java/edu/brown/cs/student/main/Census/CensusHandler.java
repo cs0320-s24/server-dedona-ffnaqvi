@@ -12,12 +12,10 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-// TODO: Model this class after the activity handler in the server gearup
 public class CensusHandler implements Route {
 
   private String apiKey = "c4dae4f067d4a604595239338bf6e62c93bcdc34";
@@ -73,9 +71,7 @@ public class CensusHandler implements Route {
 
   private String sendRequest(String stateCode, String countyCode)
       throws URISyntaxException, IOException, InterruptedException {
-    // Build a request to this BoredAPI. Try out this link in your browser, what do you see?
-    // TODO 1: Looking at the documentation, how can we add to the URI to query based
-    // on participant number?
+
     HttpRequest buildCensusApiRequest =
         HttpRequest.newBuilder()
             .uri(new URI("https://api.census.gov/data/2021/acs/acs1/subject/variables?get=NAME,S2802_C03_022E&for=county:"+ countyCode + "&in=state:" + stateCode+"&key="+this.apiKey))

@@ -1,80 +1,67 @@
-package edu.brown.cs.student.main.Census;
-
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
-/**
- * A class that wraps a FileServer instance and caches responses
- * for efficiency. Notice that the interface hasn't changed at all.
- * This is an example of the proxy pattern; callers will interact
- * with the CachedFileServer, rather than the "real" data source.
- *
- * This version uses a Guava cache class to manage the cache.
- */
-private final LoadingCache<String, Collection<String>> cache;
-private Census census;
-public class CachedCensus {
-
-
-    /**
-     * Proxy class: wrap an instance of Searcher (of any kind) and cache
-     * its results.
-     *
-     * There are _many_ ways to implement this! We could use a plain
-     * HashMap, but then we'd have to handle "eviction" ourselves.
-     * Lots of libraries exist. We're using Guava here, to demo the
-     * strategy pattern.
-     *
-     * @param toWrap the Searcher to wrap
-     */
-    public CachedSensus(Census toWrap) {
-        this.census = toWrap;
-
-        // Look at the docs -- there are lots of builder parameters you can use
-        //   including ones that affect garbage-collection (not needed for Server).
-        this.cache = CacheBuilder.newBuilder()
-                // How many entries maximum in the cache?
-                .maximumSize(10)
-                // How long should entries remain in the cache?
-                .expireAfterWrite(1, TimeUnit.MINUTES)
-                // Keep statistical info around for profiling purposes
-                .recordStats()
-                .build(
-                        // Strategy pattern: how should the cache behave when
-                        // it's asked for something it doesn't have?
-                        new CacheLoader<>() {
-                            @Override
-                            public Collection<String> load(String key)  {
-                                System.out.println("called load for: "+key);
-                                // If this isn't yet present in the cache, load it:
-                                return wrappedSearcher.search(key);
-                            }
-                        });
-    }
-
-    @Override
-    public Collection<String> search(String target) {
-        // "get" is designed for concurrent situations; for today, use getUnchecked:
-        Collection<String> result = cache.getUnchecked(target);
-        // For debugging and demo (would remove in a "real" version):
-        System.out.println(cache.stats());
-        return result;
-    }
-
-    // This would have been a more direct way to start on building a proxy
-    //  (but I like using Guava's cache)
-    /*
-    public Collection<String> search(String target) {
-        // Pass through: call the wrapped object
-        return this.wrappedSearcher.searchLines(target);
-    }
-     */
-}
-
+//package edu.brown.cs.student.main.Census;
+//
+//import com.squareup.moshi.JsonAdapter;
+//import com.squareup.moshi.Moshi;
+//import com.squareup.moshi.Types;
+//
+//import java.io.IOException;
+//import java.net.URI;
+//import java.net.URISyntaxException;
+//import java.net.http.HttpClient;
+//import java.net.http.HttpRequest;
+//import java.net.http.HttpResponse;
+//import java.util.HashMap;
+//import java.util.List;
+//import java.util.Map;
+//import java.util.concurrent.TimeUnit;
+//
+//import com.google.common.cache.CacheBuilder;
+//import com.google.common.cache.CacheLoader;
+//import com.google.common.cache.LoadingCache;
+//
+//import spark.Request;
+//import spark.Response;
+//import spark.Route;
+//
+//public class CachedCensusHandler implements Route {
+//
+//    private final CensusHandler wrappedCensusHandler;
+//    private final LoadingCache<String, Object> cache;
+//
+//    public CachedCensusHandler(CensusHandler censusHandler) {
+//        this.wrappedCensusHandler = censusHandler;
+//        this.cache = CacheBuilder.newBuilder()
+//                .maximumSize(100) // Adjust as needed
+//                .expireAfterWrite(1, TimeUnit.HOURS) // Adjust as needed
+//                .build(new CacheLoader<>() {
+//                    //TODO: Figure out what to pass into handle
+//                    @Override
+//                    public Object load(String key) throws Exception {
+//                        // If the data is not found in the cache, fetch it using the wrapped CensusHandler
+//                        return wrappedCensusHandler.handle(request, response); // Pass request and response to the handle method
+//                    }
+//                });
+//    }
+//
+//    @Override
+//    public Object handle(Request request, Response response) throws IOException {
+//        String cacheKey = generateCacheKey(request);
+//
+//        try {
+//            // Attempt to retrieve data from the cache
+//            return cache.get(cacheKey);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            response.status(500);
+//            return "Error retrieving data from cache: " + e.getMessage();
+//        }
+//    }
+//
+//    private String generateCacheKey(Request request) {
+//        // Generate a unique cache key based on request parameters, headers, or URL
+//        // Example: Concatenate state and county parameters to form a cache key
+//        String state = request.queryParams("state");
+//        String county = request.queryParams("county");
+//        return state + "_" + county;
+//    }
+//}
