@@ -2,7 +2,7 @@ package edu.brown.cs.student.main.Census;
 
 public class Census {
   private String NAME;
-  private String S2802_C03_022E;
+  private Double S2802_C03_022E;
   private String state;
   private String county;
 
@@ -21,7 +21,7 @@ public class Census {
     this.county = s;
   }
 
-  public void setPercentageOfAccess(int i) {
-    this.S2802_C03_022E = Integer.toString(i);
+  public void setPercentageOfAccess(double i) {
+    this.S2802_C03_022E = i;
   }
 }
