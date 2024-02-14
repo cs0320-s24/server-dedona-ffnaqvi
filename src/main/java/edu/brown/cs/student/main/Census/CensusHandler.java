@@ -16,6 +16,10 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+/**
+ * Class to serve as a proxy server between the user and the
+ * ACS API
+ */
 public class CensusHandler implements Route {
 
   private String apiKey = "c4dae4f067d4a604595239338bf6e62c93bcdc34";
@@ -27,11 +31,8 @@ public class CensusHandler implements Route {
   }
 
   /**
-   * This handle method needs to be filled by any class implementing Route. When the path set in
-   * edu.brown.cs.examples.moshiExample.server.Server gets accessed, it will fire the handle method.
-   *
-   * <p>NOTE: beware this "return Object" and "throws Exception" idiom. We need to follow it because
-   * the library uses it, but in general this lowers the protection of the type system.
+   * This handle method requests state and county params from the user and uses
+   * those params to send and recieve requests from the ACS API
    *
    * @param request The request object providing information about the HTTP request
    * @param response The response object providing functionality for modifying the response
@@ -40,11 +41,10 @@ public class CensusHandler implements Route {
   public Object handle(Request request, Response response) throws IOException {
 
     String state = request.queryParams("state");
-    System.out.println("State: "+state);
     String stateCode = this.stateCodes.get(state);
     String countyCode;
 
-
+    /* In the case that the user does not enter a county param */
     String county = request.queryParams("county");
     if (county == null) {
       county = "*";
@@ -76,6 +76,16 @@ public class CensusHandler implements Route {
     return responseMap;
   }
 
+  /**
+   * Method to send a requets to the ACS API
+   *
+   * @param stateCode
+   * @param countyCode
+   * @return
+   * @throws URISyntaxException
+   * @throws IOException
+   * @throws InterruptedException
+   */
   private String sendRequest(String stateCode, String countyCode)
       throws URISyntaxException, IOException, InterruptedException {
 
@@ -92,13 +102,14 @@ public class CensusHandler implements Route {
             .build()
             .send(buildCensusApiRequest, HttpResponse.BodyHandlers.ofString());
 
-    System.out.println(sentCensusApiResponse);
-    System.out.println(sentCensusApiResponse.body());
-    System.out.println("before returning from sendRequest");
-
     return sentCensusApiResponse.body();
   }
 
+  /**
+   * Method to get the state codes from the ACS API and store them
+   *
+   * @return a map with state names mapped to state codes
+   */
   private Map<String, String> getStateCodes() {
     Map<String, String> codes = new HashMap<>();
 
@@ -141,6 +152,14 @@ public class CensusHandler implements Route {
     return codes;
   }
 
+  /**
+   * Method to get the countyCode from the ACS API given a state and county
+   *
+   * @param stateCode the code of the state
+   * @param targetCounty the String of the requested county
+   * @return a String of the countyCode
+   * @throws IOException
+   */
   private String getCountyCodes(String stateCode, String targetCounty) throws IOException {
     try {
       // Send a request to the API to get county names and codes for a specific state
