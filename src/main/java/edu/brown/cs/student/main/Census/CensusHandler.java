@@ -61,7 +61,7 @@ public class CensusHandler implements Route {
       // Sends a request to the API and receives JSON back
       String censusJson = this.sendRequest(stateCode,countyCode);
       // Deserializes JSON into an Activity
-      Census census = CensusAPIUtilities.deserializeCensus(censusJson);
+      List<Census> census = CensusAPIUtilities.deserializeCensus(censusJson);
       // Adds results to the responseMap
       responseMap.put("result", "success");
       responseMap.put("census", census);
