@@ -69,6 +69,7 @@ public class CensusHandler implements Route {
       return responseMap;
     } catch (Exception e) {
 //      e.printStackTrace();
+      response.status(404);
       // This is a relatively unhelpful exception message. An important part of this sprint will be
       // in learning to debug correctly by creating your own informative error messages where Spark
       // falls short.
