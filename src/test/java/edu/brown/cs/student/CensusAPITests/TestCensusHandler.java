@@ -61,20 +61,20 @@ public class TestCensusHandler {
     return clientConnection;
   }
 
-  //  @Test
-  //  // TODO fix that invalid input works
-  //  // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the
-  // type
-  //  // checker
-  //  public void testNoState() throws IOException {
-  //    HttpURLConnection clientConnection = tryRequest("census");
-  //    // Get an OK response (the *connection* worked, the *API* provides an error response)
-  //    assertEquals(404, clientConnection.getResponseCode());
-  //
-  //    // check response?
-  //
-  //    clientConnection.disconnect();
-  //  }
+    @Test
+    // TODO fix that invalid input works
+    // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the
+    // type
+    // checker
+    public void testNoState() throws IOException {
+      HttpURLConnection clientConnection = tryRequest("census");
+      // Get an OK response (the *connection* worked, the *API* provides an error response)
+      assertEquals(404, clientConnection.getResponseCode());
+
+      // check response?
+
+      clientConnection.disconnect();
+    }
 
   @Test
   // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
