@@ -1,7 +1,7 @@
 package edu.brown.cs.student.CensusAPITests;
 
 import edu.brown.cs.student.main.Census.CachedCensusHandler;
-import edu.brown.cs.student.main.Spark.SparkUtilities;
+import edu.brown.cs.student.main.Spark.SparkTestUtilities;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
 import spark.Request;
@@ -27,7 +27,7 @@ public class TestCachedCensus {
   private CachedCensusHandler cachedCensusHandler;
 
     @Test
-    public void testHandle() throws IOException {
+    public void testHandle() throws IOException, URISyntaxException, InterruptedException {
       // Create a mock request
       Request mockRequest = SparkTestUtilities.mockRequest();
 
