@@ -21,6 +21,8 @@ public class CensusHandler implements Route {
 
   private String apiKey = "c4dae4f067d4a604595239338bf6e62c93bcdc34";
   private Map<String, String> stateCodes;
+  public String stateCode;
+  public String countyCode;
 
   public CensusHandler() {
     // Initialize the stateCodes map when the handler is created
@@ -36,10 +38,10 @@ public class CensusHandler implements Route {
    */
   @Override
   public Object handle(Request request, Response response) throws IOException {
-    new CachedCensusHandler(this, request, response);
 
     String state = request.queryParams("state");
     String stateCode = this.stateCodes.get(state);
+    this.stateCode = stateCode;
     String countyCode;
 
     /* In the case that the user does not enter a county param */
@@ -50,10 +52,13 @@ public class CensusHandler implements Route {
     } else {
       countyCode = getCountyCodes(stateCode, county);
     }
-
+    this.countyCode = countyCode;
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
     try {
+      if (state == null) {
+        throw new NullPointerException("No state param entered");
+      }
       // Sends a request to the API and receives JSON back
       String censusJson = this.sendRequest(stateCode, countyCode);
       // Deserializes JSON into an Activity
@@ -63,12 +68,14 @@ public class CensusHandler implements Route {
       responseMap.put("census", census);
       return responseMap;
     } catch (Exception e) {
-      e.printStackTrace();
+//      e.printStackTrace();
       // This is a relatively unhelpful exception message. An important part of this sprint will be
       // in learning to debug correctly by creating your own informative error messages where Spark
       // falls short.
       responseMap.put("result", "Exception");
     }
+    new CachedCensusHandler(this, request, response);
+
     return responseMap;
   }
 
@@ -82,7 +89,7 @@ public class CensusHandler implements Route {
    * @throws IOException
    * @throws InterruptedException
    */
-  private String sendRequest(String stateCode, String countyCode)
+  public String sendRequest(String stateCode, String countyCode)
       throws URISyntaxException, IOException, InterruptedException {
 
     HttpRequest buildCensusApiRequest =

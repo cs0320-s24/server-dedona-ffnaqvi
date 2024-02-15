@@ -23,7 +23,7 @@ public class Server {
 
   public static void main(String[] args) throws IOException {
 
-    int port = 3231;
+    int port = 3232;
 
     Spark.port(port);
 
