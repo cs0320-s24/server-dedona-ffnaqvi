@@ -35,9 +35,7 @@ public class Server {
 
     after(
             (request, response) -> {
-              // TODO: By setting the Access-Control-Allow-Origin header to "*", we allow requests from
-              // any origin.
-              response.header("Access-Control-Allow-Origin", "*");
+                         response.header("Access-Control-Allow-Origin", "*");
               response.header("Access-Control-Allow-Methods", "*");
             });
 
