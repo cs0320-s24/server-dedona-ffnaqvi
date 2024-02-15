@@ -4,8 +4,6 @@ import edu.brown.cs.student.main.Census.Census;
 import edu.brown.cs.student.main.Census.CensusAPIUtilities;
 import java.io.IOException;
 import java.util.List;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 
 /**

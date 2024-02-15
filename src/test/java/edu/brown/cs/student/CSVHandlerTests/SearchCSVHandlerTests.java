@@ -1,15 +1,23 @@
-package edu.brown.cs.student.CSVHandlerTests;
+ package edu.brown.cs.student.CSVHandlerTests;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import spark.Spark;
+ import com.squareup.moshi.Moshi;
+ import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
+ import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
+ import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
+ import java.io.IOException;
+ import java.net.HttpURLConnection;
+ import java.net.URL;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import okio.Buffer;
+ import org.junit.jupiter.api.AfterEach;
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ import org.testng.Assert;
+ import spark.Spark;
 
-public class SearchCSVHandlerTests {
+ public class SearchCSVHandlerTests {
 
   @BeforeAll
   public static void setup_before_everything() {
@@ -22,23 +30,17 @@ public class SearchCSVHandlerTests {
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
   }
 
-  /**
-   * Shared state for all tests. We need to be able to mutate it (adding recipes etc.) but never
-   * need to replace the reference itself. We clear this state out after every test runs.
-   */
-  // TODO: add any static variables needed, etc: final List<Income> income = new ArrayList<>();
+  @BeforeEach
+  public void setup() {
+    // Re-initialize state, etc. for _every_ test method run
 
-  // TODO: uncomment and fix
-  //  @BeforeEach
-  //  public void setup() {
-  //    // Re-initialize state, etc. for _every_ test method run
-  //    // TODO: add any static variables needed, etc: this.income.clear();
-  //
-  //    // In fact, restart the entire Spark server for every test!
-  //    Spark.get("loadCSV", new LoadCSVHandler());
-  //    Spark.init();
-  //    Spark.awaitInitialization(); // don't continue until the server is listening
-  //  }
+    // In fact, restart the entire Spark server for every test!
+    Spark.get("loadCSV", new LoadCSVHandler());
+    Spark.get("searchCSV", new ViewCSVHandler());
+
+    Spark.init();
+    Spark.awaitInitialization(); // don't continue until the server is listening
+  }
 
   @AfterEach
   public void teardown() {
@@ -68,37 +70,27 @@ public class SearchCSVHandlerTests {
     return clientConnection;
   }
 
-  //  @Test
-  //  // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the
-  // type
-  //  // checker
-  //  public void testAPISearchCSV() throws IOException {
-  //    String searchKeyword = "Barrington";
-  //    HttpURLConnection clientConnection = tryRequest("searchCSV?searchKeyword="+searchKeyword);
-  //    // Get an OK response (the *connection* worked, the *API* provides an error response)
-  //    assertEquals(200, clientConnection.getResponseCode());
-  //
-  //    // Now we need to see whether we've got the expected Json response.
-  //    // SoupAPIUtilities handles ingredient lists, but that's not what we've got here.
-  //    // NOTE:   (How could we reduce the code repetition?)
-  //    Moshi moshi = new Moshi.Builder().build();
-  //
-  //    // We'll use okio's Buffer class here
-  //    System.out.println(clientConnection.getInputStream());
-  //    SearchCSVHandler.SearchDataSuccessResponse response =
-  //        moshi
-  //            .adapter(SearchCSVHandler.SearchDataSuccessResponse.class)
-  //            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-  //
-  //    // TODO: do we create a new class that itself has CSV parameters? or do we have
-  // SearchCSVHandler take in these requirements?
-  ////    SearchCSVHandler carrot =
-  ////        new SearchCSVHandler();
-  ////
-  ////    Map<String, Object> result = (Map<String, Object>) response.responseMap().get("Carrot");
-  ////    System.out.println(result.get("ingredients"));
-  ////    assertEquals(carrot.getIngredients(), result.get("ingredients"));
-  //    clientConnection.disconnect();
-  //  }
+  @Test
+  public void testAPISearchCSV() throws IOException {
+    String searchKeyword = "Barrington";
+    HttpURLConnection clientConnection = tryRequest("searchCSV?searchKeyword=" + searchKeyword);
+    // Get an OK response (the *connection* worked, the *API* provides an error response)
+    Assert.assertEquals(200, clientConnection.getResponseCode());
 
-}
+    // Now we need to see whether we've got the expected Json response.
+    // SoupAPIUtilities handles ingredient lists, but that's not what we've got here.
+    // NOTE:   (How could we reduce the code repetition?)
+    Moshi moshi = new Moshi.Builder().build();
+
+    // We'll use okio's Buffer class here
+    System.out.println(clientConnection.getInputStream());
+    SearchCSVHandler.SearchDataSuccessResponse response =
+        moshi
+            .adapter(SearchCSVHandler.SearchDataSuccessResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    // TODO: check response too at some point
+
+    clientConnection.disconnect();
+  }
+ }

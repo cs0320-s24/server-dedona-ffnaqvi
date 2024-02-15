@@ -20,7 +20,7 @@ public class CachedCensusHandler implements Route {
   public CachedCensusHandler(CensusHandler censusHandler, Request request, Response response) {
     System.out.println("in caching");
     this.wrappedCensusHandler = censusHandler;
-//    this.cacheKey = this.generateCacheKey();
+    //    this.cacheKey = this.generateCacheKey();
 
     this.cache =
         CacheBuilder.newBuilder()
@@ -38,9 +38,13 @@ public class CachedCensusHandler implements Route {
                   }
                 });
   }
+
   @Override
-  public Object handle(Request request, Response response) throws IOException, URISyntaxException, InterruptedException {
-    String censusJson = this.wrappedCensusHandler.sendRequest(this.wrappedCensusHandler.stateCode, this.wrappedCensusHandler.countyCode);
+  public Object handle(Request request, Response response)
+      throws IOException, URISyntaxException, InterruptedException {
+    String censusJson =
+        this.wrappedCensusHandler.sendRequest(
+            this.wrappedCensusHandler.stateCode, this.wrappedCensusHandler.countyCode);
     // Deserializes JSON into an Activity
     List<Census> census = CensusAPIUtilities.deserializeCensus(censusJson);
 
@@ -56,5 +60,4 @@ public class CachedCensusHandler implements Route {
       return "Error retrieving data from cache: " + e.getMessage();
     }
   }
-
 }

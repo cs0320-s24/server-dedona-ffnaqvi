@@ -1,40 +1,41 @@
-package edu.brown.cs.student.CSVHandlerTests;
+ package edu.brown.cs.student.CSVHandlerTests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
-import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import spark.Spark;
+ import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
+ import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
+ import edu.brown.cs.student.main.server.Server;
+ import java.io.IOException;
+ import java.net.HttpURLConnection;
+ import java.net.URL;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import org.junit.jupiter.api.AfterEach;
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ import spark.Spark;
 
-public class ViewCSVParserTests {
+ public class ViewCSVParserTests {
 
-  //  @BeforeAll
-  //  public static void setup_before_everything() {
-  //    // Set the Spark port number. This can only be done once, and has to
-  //    // Setting port 0 will cause Spark to use an arbitrary available port.
-  //    Spark.port(0);
-  //
-  //    // Changing the JDK *ROOT* logger's level (not global) will block messages
-  //    //   (assuming using JDK, not Log4J)
-  //    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
-  //  }
+  @BeforeAll
+  public static void setup_before_everything() {
+    // Set the Spark port number. This can only be done once, and has to
+    // Setting port 0 will cause Spark to use an arbitrary available port.
+    Spark.port(0);
+
+    // Changing the JDK *ROOT* logger's level (not global) will block messages
+    //   (assuming using JDK, not Log4J)
+    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+  }
 
   /**
    * Shared state for all tests. We need to be able to mutate it (adding recipes etc.) but never
    * need to replace the reference itself. We clear this state out after every test runs.
    */
-  // TODO: add any static variables needed, etc: final List<Income> income = new ArrayList<>();
-
   @BeforeEach
   public void setup() {
     // Re-initialize state, etc. for _every_ test method run
-    // TODO: add any static variables needed, etc: this.income.clear();
 
     // In fact, restart the entire Spark server for every test!
     Spark.get("loadCSV", new LoadCSVHandler());
@@ -48,7 +49,7 @@ public class ViewCSVParserTests {
   public void teardown() {
     // Gracefully stop Spark listening on both endpoints after each test
     Spark.unmap("loadCSV");
-    Spark.unmap("searchCSV");
+    Spark.unmap("viewCSV");
 
     Spark.awaitStop(); // don't proceed until the server is stopped
   }
@@ -77,27 +78,20 @@ public class ViewCSVParserTests {
   @Test
   // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
   // checker
-  public void testSearchBeforeLoad() throws IOException {
-    HttpURLConnection clientConnection = tryRequest("searchCSV");
+  public void testViewBeforeLoad() throws IOException {
+    HttpURLConnection clientConnection = tryRequest("viewCSV");
     // Get an OK response (the *connection* worked, the *API* provides an error response)
     assertEquals(404, clientConnection.getResponseCode());
   }
 
-  //  @Test
-  //  // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the
-  // type
-  //  // checker
-  //  public void testSearchBasic() throws IOException {
-  //    HttpURLConnection loadConnection = tryRequest("loadCSV?fileName=datasource\\stardata.csv");
-  //
-  //    HttpURLConnection clientConnection =
-  //
-  // tryRequest("searchCSV?searchValue=Lindsey&hasHeaders=true&columnNameIdentifier=ProperName");
-  //    // Get an OK response (the *connection* worked, the *API* provides an error response)
-  //    assertEquals(200, clientConnection.getResponseCode());
-  //
-  //    // check response?
-  //
-  //    clientConnection.disconnect();
-  //  }
-}
+  @Test
+  public void testViewBasic() throws IOException {
+    HttpURLConnection loadConnection = tryRequest("loadCSV?fileName=datasource\\stardata.csv");
+    assertEquals(200, loadConnection.getResponseCode());
+
+    HttpURLConnection clientConnection = tryRequest("viewCSV");
+    assertEquals(200, Server.loadStatus);
+
+    clientConnection.disconnect();
+  }
+ }
