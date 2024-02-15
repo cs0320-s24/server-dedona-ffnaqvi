@@ -90,11 +90,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.11.0</version>
+        <!-- Use the latest version available -->
         <configuration>
-          <source>21</source>
-          <target>21</target>
-          <compilerArgs>--enable-preview</compilerArgs>
+          <release>17</release>
         </configuration>
       </plugin>
 
@@ -340,6 +339,7 @@
           </reportSet>
         </reportSets>
       </plugin>
+
     </plugins>
   </reporting>
 </project>
