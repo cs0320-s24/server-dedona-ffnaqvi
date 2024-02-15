@@ -9,6 +9,7 @@ import spark.Response;
 //import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class TestCachedCensus {
 
@@ -18,7 +19,7 @@ public class TestCachedCensus {
   private CachedCensusHandler cachedCensusHandler;
 
     @Test
-    public void testHandle() throws IOException {
+    public void testHandle() throws IOException, URISyntaxException, InterruptedException {
       // Create a mock request
       Request mockRequest = SparkUtilities.mockRequest();
       // Set query parameters

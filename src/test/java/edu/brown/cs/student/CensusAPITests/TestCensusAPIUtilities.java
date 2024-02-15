@@ -27,7 +27,7 @@ public class TestCensusAPIUtilities {
       // This might throw an IOException, but if so JUnit will mark the test as failed.
       System.out.println(censusList.get(0).toString());
       Assert.assertEquals(
-          "[Lauderdale County, Alabama has the estimated percent broadband internet subscription of: 77.8%]",
+          "[Lauderdale County, Alabama has the estimated percent broadband internet subscription of: 77.8%]\n",
           censusList.get(0).toString());
     }
 }
