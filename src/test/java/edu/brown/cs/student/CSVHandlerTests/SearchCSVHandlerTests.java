@@ -1,4 +1,4 @@
-package edu.brown.cs.student.IncomeAPITests;
+package edu.brown.cs.student.CSVHandlerTests;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
