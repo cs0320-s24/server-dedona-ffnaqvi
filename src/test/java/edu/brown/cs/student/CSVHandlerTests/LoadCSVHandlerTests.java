@@ -1,4 +1,4 @@
-package edu.brown.cs.student.IncomeAPITests;
+package edu.brown.cs.student.CSVHandlerTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
