@@ -4,6 +4,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import spark.Request;
 import spark.Response;
@@ -13,10 +15,13 @@ public class CachedCensusHandler implements Route {
 
   private final CensusHandler wrappedCensusHandler;
   private final LoadingCache<String, Object> cache;
+  private String cacheKey;
 
   public CachedCensusHandler(CensusHandler censusHandler, Request request, Response response) {
     System.out.println("in caching");
     this.wrappedCensusHandler = censusHandler;
+//    this.cacheKey = this.generateCacheKey();
+
     this.cache =
         CacheBuilder.newBuilder()
             .maximumSize(100) // Adjust as needed
@@ -33,15 +38,18 @@ public class CachedCensusHandler implements Route {
                   }
                 });
   }
-
   @Override
-  public Object handle(Request request, Response response) throws IOException {
-    String cacheKey = generateCacheKey(request);
+  public Object handle(Request request, Response response) throws IOException, URISyntaxException, InterruptedException {
+    String censusJson = this.wrappedCensusHandler.sendRequest(this.wrappedCensusHandler.stateCode, this.wrappedCensusHandler.countyCode);
+    // Deserializes JSON into an Activity
+    List<Census> census = CensusAPIUtilities.deserializeCensus(censusJson);
+
+    this.cache.put(this.cacheKey, census);
     System.out.println("cache key");
 
     try {
       // Attempt to retrieve data from the cache
-      return cache.get(cacheKey);
+      return cache.getUnchecked(this.cacheKey);
     } catch (Exception e) {
       e.printStackTrace();
       response.status(500);
@@ -49,11 +57,4 @@ public class CachedCensusHandler implements Route {
     }
   }
 
-  private String generateCacheKey(Request request) {
-    // Generate a unique cache key based on request parameters, headers, or URL
-    // Example: Concatenate state and county parameters to form a cache key
-    String state = request.queryParams("state");
-    String county = request.queryParams("county");
-    return state + "_" + county;
-  }
 }
