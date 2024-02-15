@@ -40,7 +40,7 @@ public class CensusAPIUtilities {
             try {
               census.setPercentageOfAccess(Double.parseDouble(censusData.get(i).get(1)));
             } catch (NumberFormatException e) {
-              System.out.println("precentange of broadband access is incorrect");
+              System.out.println("percentange of broadband access is incorrect");
             }
             censusList.add(census);
           }
