@@ -1,34 +1,33 @@
-package edu.brown.cs.student.CSVHandlerTests;
+ package edu.brown.cs.student.CSVHandlerTests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
-import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+ import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
+ import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
+ import edu.brown.cs.student.main.server.Server;
+ import java.io.IOException;
+ import java.net.HttpURLConnection;
+ import java.net.URL;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import org.junit.jupiter.api.AfterEach;
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ import spark.Spark;
 
-import edu.brown.cs.student.main.server.Server;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import spark.Spark;
+ public class ViewCSVParserTests {
 
-public class ViewCSVParserTests {
+  @BeforeAll
+  public static void setup_before_everything() {
+    // Set the Spark port number. This can only be done once, and has to
+    // Setting port 0 will cause Spark to use an arbitrary available port.
+    Spark.port(0);
 
-    @BeforeAll
-    public static void setup_before_everything() {
-      // Set the Spark port number. This can only be done once, and has to
-      // Setting port 0 will cause Spark to use an arbitrary available port.
-      Spark.port(0);
-
-      // Changing the JDK *ROOT* logger's level (not global) will block messages
-      //   (assuming using JDK, not Log4J)
-      Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
-    }
+    // Changing the JDK *ROOT* logger's level (not global) will block messages
+    //   (assuming using JDK, not Log4J)
+    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+  }
 
   /**
    * Shared state for all tests. We need to be able to mutate it (adding recipes etc.) but never
@@ -85,16 +84,14 @@ public class ViewCSVParserTests {
     assertEquals(404, clientConnection.getResponseCode());
   }
 
-    @Test
+  @Test
+  public void testViewBasic() throws IOException {
+    HttpURLConnection loadConnection = tryRequest("loadCSV?fileName=datasource\\stardata.csv");
+    assertEquals(200, loadConnection.getResponseCode());
 
-    public void testViewBasic() throws IOException {
-      HttpURLConnection loadConnection = tryRequest("loadCSV?fileName=datasource\\stardata.csv");
-      assertEquals(200, loadConnection.getResponseCode());
+    HttpURLConnection clientConnection = tryRequest("viewCSV");
+    assertEquals(200, Server.loadStatus);
 
-
-      HttpURLConnection clientConnection = tryRequest("viewCSV");
-      assertEquals(200, Server.loadStatus);
-
-      clientConnection.disconnect();
-    }
-}
+    clientConnection.disconnect();
+  }
+ }

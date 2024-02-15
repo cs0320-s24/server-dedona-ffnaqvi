@@ -1,25 +1,23 @@
-package edu.brown.cs.student.CSVHandlerTests;
+ package edu.brown.cs.student.CSVHandlerTests;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+ import com.squareup.moshi.Moshi;
+ import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
+ import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
+ import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
+ import java.io.IOException;
+ import java.net.HttpURLConnection;
+ import java.net.URL;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import okio.Buffer;
+ import org.junit.jupiter.api.AfterEach;
+ import org.junit.jupiter.api.BeforeAll;
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ import org.testng.Assert;
+ import spark.Spark;
 
-import com.squareup.moshi.Moshi;
-import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
-import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
-import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
-import okio.Buffer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.testng.Assert;
-import spark.Spark;
-
-public class SearchCSVHandlerTests {
+ public class SearchCSVHandlerTests {
 
   @BeforeAll
   public static void setup_before_everything() {
@@ -72,28 +70,27 @@ public class SearchCSVHandlerTests {
     return clientConnection;
   }
 
-    @Test
-    public void testAPISearchCSV() throws IOException {
-      String searchKeyword = "Barrington";
-      HttpURLConnection clientConnection = tryRequest("searchCSV?searchKeyword="+searchKeyword);
-      // Get an OK response (the *connection* worked, the *API* provides an error response)
-      Assert.assertEquals(200, clientConnection.getResponseCode());
+  @Test
+  public void testAPISearchCSV() throws IOException {
+    String searchKeyword = "Barrington";
+    HttpURLConnection clientConnection = tryRequest("searchCSV?searchKeyword=" + searchKeyword);
+    // Get an OK response (the *connection* worked, the *API* provides an error response)
+    Assert.assertEquals(200, clientConnection.getResponseCode());
 
-      // Now we need to see whether we've got the expected Json response.
-      // SoupAPIUtilities handles ingredient lists, but that's not what we've got here.
-      // NOTE:   (How could we reduce the code repetition?)
-      Moshi moshi = new Moshi.Builder().build();
+    // Now we need to see whether we've got the expected Json response.
+    // SoupAPIUtilities handles ingredient lists, but that's not what we've got here.
+    // NOTE:   (How could we reduce the code repetition?)
+    Moshi moshi = new Moshi.Builder().build();
 
-      // We'll use okio's Buffer class here
-      System.out.println(clientConnection.getInputStream());
-      SearchCSVHandler.SearchDataSuccessResponse response =
-          moshi
-              .adapter(SearchCSVHandler.SearchDataSuccessResponse.class)
-              .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    // We'll use okio's Buffer class here
+    System.out.println(clientConnection.getInputStream());
+    SearchCSVHandler.SearchDataSuccessResponse response =
+        moshi
+            .adapter(SearchCSVHandler.SearchDataSuccessResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
-      //TODO: check response too at some point
+    // TODO: check response too at some point
 
-      clientConnection.disconnect();
-    }
-
-}
+    clientConnection.disconnect();
+  }
+ }

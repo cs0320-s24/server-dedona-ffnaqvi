@@ -23,10 +23,13 @@ public class CensusHandler implements Route {
   private Map<String, String> stateCodes;
   public String stateCode;
   public String countyCode;
+  public CachedCensusHandler cache;
 
-  public CensusHandler() {
+  public CensusHandler(CachedCensusHandler pCache) {
     // Initialize the stateCodes map when the handler is created
     this.stateCodes = getStateCodes();
+
+    this.cache = pCache;
   }
 
   /**
@@ -54,6 +57,19 @@ public class CensusHandler implements Route {
     }
     this.countyCode = countyCode;
     // Creates a hashmap to store the results of the request
+
+    Boolean wantCaching;
+    try {
+      wantCaching = Boolean.parseBoolean(request.queryParams("cache"));
+    }
+    catch (Exception e) {
+      wantCaching = false;
+    }
+
+    if (wantCaching) {
+
+    }
+
     Map<String, Object> responseMap = new HashMap<>();
     try {
       if (state == null) {
@@ -68,7 +84,7 @@ public class CensusHandler implements Route {
       responseMap.put("census", census);
       return responseMap;
     } catch (Exception e) {
-//      e.printStackTrace();
+      //      e.printStackTrace();
       response.status(404);
       // This is a relatively unhelpful exception message. An important part of this sprint will be
       // in learning to debug correctly by creating your own informative error messages where Spark

@@ -20,7 +20,7 @@ public class Server {
   public static int loadStatus;
   public static CSVParser<List<String>> parser;
   public static String fileName;
-
+  public static CachedCensusHandler cache;
   public static void main(String[] args) throws IOException {
 
     int port = 3232;
@@ -34,7 +34,7 @@ public class Server {
         });
 
     // Setting up the handler for the GET /census endpoints
-    Spark.get("census", new CensusHandler());
+    Spark.get("census", new CensusHandler(cache));
 
     // Setting up the handler for the CSV endpoints
     Spark.get("loadCSV", new LoadCSVHandler());
