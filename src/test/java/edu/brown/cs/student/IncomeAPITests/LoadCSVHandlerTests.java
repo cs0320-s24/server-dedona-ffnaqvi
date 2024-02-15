@@ -10,12 +10,11 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
-import spark.Spark;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import spark.Spark;
 
 public class LoadCSVHandlerTests {
 
@@ -54,7 +53,6 @@ public class LoadCSVHandlerTests {
     Spark.awaitStop(); // don't proceed until the server is stopped
   }
 
-
   /**
    * Helper to start a connection to a specific API endpoint/params
    *
@@ -76,13 +74,12 @@ public class LoadCSVHandlerTests {
     return clientConnection;
   }
 
-
   @Test
   // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
   // checker
   public void testAPIReadCSV() throws IOException {
     String fileName = "ri_city_income.csv";
-    HttpURLConnection clientConnection = tryRequest("loadCSV?fileName=datasource/"+fileName);
+    HttpURLConnection clientConnection = tryRequest("loadCSV?fileName=datasource/" + fileName);
     // Get an OK response (the *connection* worked, the *API* provides an error response)
     assertEquals(200, clientConnection.getResponseCode());
 
@@ -101,5 +98,4 @@ public class LoadCSVHandlerTests {
 
     clientConnection.disconnect();
   }
-
 }

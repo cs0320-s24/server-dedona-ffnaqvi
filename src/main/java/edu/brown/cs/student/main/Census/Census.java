@@ -15,13 +15,19 @@ public class Census {
    */
   @Override
   public String toString() {
-    return "[" + this.county + ", " +
-            this.state + " has the estimated percent broadband internet subscription of: " +
-            this.S2802_C03_022E + "%" +"]\n";
+    return "["
+        + this.county
+        + ", "
+        + this.state
+        + " has the estimated percent broadband internet subscription of: "
+        + this.S2802_C03_022E
+        + "%"
+        + "]\n";
   }
 
   /**
    * Method to set the state field to the passed in String
+   *
    * @param s
    */
   public void setState(String s) {
@@ -30,6 +36,7 @@ public class Census {
 
   /**
    * Method to set the county field to the passed in String
+   *
    * @param s
    */
   public void setCounty(String s) {
@@ -38,6 +45,7 @@ public class Census {
 
   /**
    * Method to set the S2802_C03_022E field to the passed in double
+   *
    * @param i
    */
   public void setPercentageOfAccess(double i) {

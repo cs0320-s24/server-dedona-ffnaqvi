@@ -9,8 +9,8 @@ import spark.Response;
 import spark.Route;
 
 /**
- * ViewCSVHandler is a class that serves as an endpoint
- * for the proxy server by displaying the results of a CSV
+ * ViewCSVHandler is a class that serves as an endpoint for the proxy server by displaying the
+ * results of a CSV
  */
 public class ViewCSVHandler implements Route {
   private List<List<String>> csvData;
@@ -40,7 +40,7 @@ public class ViewCSVHandler implements Route {
     }
   }
 
-    /** Response object to send, displaying the constants of a CSV */
+  /** Response object to send, displaying the constants of a CSV */
   public record ViewDataSuccessResponse(String response_type, String[][] data) {
     public ViewDataSuccessResponse(String[][] data) {
       this("success", data);
