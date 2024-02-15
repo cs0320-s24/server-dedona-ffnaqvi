@@ -39,6 +39,7 @@ public class CensusHandler implements Route {
    */
   @Override
   public Object handle(Request request, Response response) throws IOException {
+    new CachedCensusHandler(this, request, response);
 
     String state = request.queryParams("state");
     String stateCode = this.stateCodes.get(state);
