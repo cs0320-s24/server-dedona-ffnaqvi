@@ -68,12 +68,7 @@ public class SearchCSVHandler implements Route {
 
         search.search();
         this.csvData = search.getResultList();
-        for (List<String> rowData : this.csvData) {
-          for (String data : rowData) {
-            System.out.println("->" + data);
-          }
-        }
-        System.out.println(this.csvData);
+
         return new SearchDataSuccessResponse(this.csvData).serialize();
       } catch (Exception e) {
         // Handle any other unexpected exceptions
