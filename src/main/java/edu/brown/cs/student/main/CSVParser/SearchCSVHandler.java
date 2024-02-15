@@ -4,14 +4,9 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.Creators.ListStringCreator;
 import edu.brown.cs.student.main.Search.Search;
+import edu.brown.cs.student.main.server.Server;
 import java.io.BufferedReader;
 import java.io.FileReader;
-
-import edu.brown.cs.student.main.server.Server;
-import spark.Request;
-import spark.Response;
-import spark.Route;
-
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +15,8 @@ import spark.Response;
 import spark.Route;
 
 /**
- * SearchCSVHandler is a class that serves as an endpoint
- * for the proxy server by searching a CSV and displaying the results
+ * SearchCSVHandler is a class that serves as an endpoint for the proxy server by searching a CSV
+ * and displaying the results
  */
 public class SearchCSVHandler implements Route {
   private List<List<String>> csvData;
@@ -81,7 +76,6 @@ public class SearchCSVHandler implements Route {
     }
     return new SearchDataFailureResponse().serialize();
   }
-
 
   /** Response object to send, containing the requested data */
   public record SearchDataSuccessResponse(String response_type, List<List<String>> responseData) {

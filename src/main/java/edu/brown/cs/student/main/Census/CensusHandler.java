@@ -16,10 +16,7 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-/**
- * Class to serve as a proxy server between the user and the
- * ACS API
- */
+/** Class to serve as a proxy server between the user and the ACS API */
 public class CensusHandler implements Route {
 
   private String apiKey = "c4dae4f067d4a604595239338bf6e62c93bcdc34";
@@ -31,8 +28,8 @@ public class CensusHandler implements Route {
   }
 
   /**
-   * This handle method requests state and county params from the user and uses
-   * those params to send and recieve requests from the ACS API
+   * This handle method requests state and county params from the user and uses those params to send
+   * and recieve requests from the ACS API
    *
    * @param request The request object providing information about the HTTP request
    * @param response The response object providing functionality for modifying the response
@@ -50,17 +47,15 @@ public class CensusHandler implements Route {
     if (county == null) {
       county = "*";
       countyCode = "*";
+    } else {
+      countyCode = getCountyCodes(stateCode, county);
     }
-    else {
-      countyCode = getCountyCodes(stateCode,county);
-    }
-
 
     // Creates a hashmap to store the results of the request
     Map<String, Object> responseMap = new HashMap<>();
     try {
       // Sends a request to the API and receives JSON back
-      String censusJson = this.sendRequest(stateCode,countyCode);
+      String censusJson = this.sendRequest(stateCode, countyCode);
       // Deserializes JSON into an Activity
       List<Census> census = CensusAPIUtilities.deserializeCensus(censusJson);
       // Adds results to the responseMap
@@ -92,10 +87,16 @@ public class CensusHandler implements Route {
 
     HttpRequest buildCensusApiRequest =
         HttpRequest.newBuilder()
-            .uri(new URI("https://api.census.gov/data/2021/acs/acs1/subject/variables?get=NAME,S2802_C03_022E&for=county:"+ countyCode + "&in=state:" + stateCode+"&key="+this.apiKey))
+            .uri(
+                new URI(
+                    "https://api.census.gov/data/2021/acs/acs1/subject/variables?get=NAME,S2802_C03_022E&for=county:"
+                        + countyCode
+                        + "&in=state:"
+                        + stateCode
+                        + "&key="
+                        + this.apiKey))
             .GET()
             .build();
-
 
     // Send that API request then store the response in this variable. Note the generic type.
     HttpResponse<String> sentCensusApiResponse =
@@ -116,25 +117,27 @@ public class CensusHandler implements Route {
 
     try {
       // Send a request to the API to get state names and codes
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*"))
-          .GET()
-          .build();
+      HttpRequest request =
+          HttpRequest.newBuilder()
+              .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=state:*"))
+              .GET()
+              .build();
 
-      HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+      HttpResponse<String> response =
+          HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
       // Parse the JSON response
       Moshi moshi = new Moshi.Builder().build();
-      JsonAdapter<List<List<String>>> adapter = moshi.adapter(
-          Types.newParameterizedType(List.class, List.class, String.class)
-      );
+      JsonAdapter<List<List<String>>> adapter =
+          moshi.adapter(Types.newParameterizedType(List.class, List.class, String.class));
       List<List<String>> data = adapter.fromJson(response.body());
 
       // Populate the stateCodes map
       if (data != null && data.size() > 1) {
         List<String> header = data.get(0); // Assuming the first element is the header
         // Finds the index of the column named "state" in the header.
-        // The indexOf method returns the index of the first occurrence of the specified element in the list.
+        // The indexOf method returns the index of the first occurrence of the specified element in
+        // the list.
         int stateIdIndex = header.indexOf("state");
         // Finds the index of the column named "NAME" in the header.
         // Similar to the previous line, it searches for the index of "NAME" in the header.
@@ -164,18 +167,22 @@ public class CensusHandler implements Route {
   private String getCountyCodes(String stateCode, String targetCounty) throws IOException {
     try {
       // Send a request to the API to get county names and codes for a specific state
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(new URI("https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*&in=state:" + stateCode))
-          .GET()
-          .build();
+      HttpRequest request =
+          HttpRequest.newBuilder()
+              .uri(
+                  new URI(
+                      "https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*&in=state:"
+                          + stateCode))
+              .GET()
+              .build();
 
-      HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+      HttpResponse<String> response =
+          HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
       // Parse the JSON response
       Moshi moshi = new Moshi.Builder().build();
-      JsonAdapter<List<List<String>>> adapter = moshi.adapter(
-          Types.newParameterizedType(List.class, List.class, String.class)
-      );
+      JsonAdapter<List<List<String>>> adapter =
+          moshi.adapter(Types.newParameterizedType(List.class, List.class, String.class));
       List<List<String>> data = adapter.fromJson(response.body());
 
       // Assuming the first list element is the header
@@ -198,7 +205,6 @@ public class CensusHandler implements Route {
 
           // Compare the extracted county name with the target county
           if (countyName.equalsIgnoreCase(targetCounty)) {
-            System.out.println("Found county!");
             return entry.get(countyIndex);
           }
         }
@@ -210,7 +216,5 @@ public class CensusHandler implements Route {
 
     // Return null if the county is not found
     throw new IOException("No found county");
-
-}
-
+  }
 }

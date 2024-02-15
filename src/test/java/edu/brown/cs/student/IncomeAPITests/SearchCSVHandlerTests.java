@@ -1,22 +1,12 @@
 package edu.brown.cs.student.IncomeAPITests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import com.squareup.moshi.Moshi;
-import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
-import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import spark.Spark;
 
 public class SearchCSVHandlerTests {
@@ -38,18 +28,17 @@ public class SearchCSVHandlerTests {
    */
   // TODO: add any static variables needed, etc: final List<Income> income = new ArrayList<>();
 
-
-  //TODO: uncomment and fix
-//  @BeforeEach
-//  public void setup() {
-//    // Re-initialize state, etc. for _every_ test method run
-//    // TODO: add any static variables needed, etc: this.income.clear();
-//
-//    // In fact, restart the entire Spark server for every test!
-//    Spark.get("loadCSV", new LoadCSVHandler());
-//    Spark.init();
-//    Spark.awaitInitialization(); // don't continue until the server is listening
-//  }
+  // TODO: uncomment and fix
+  //  @BeforeEach
+  //  public void setup() {
+  //    // Re-initialize state, etc. for _every_ test method run
+  //    // TODO: add any static variables needed, etc: this.income.clear();
+  //
+  //    // In fact, restart the entire Spark server for every test!
+  //    Spark.get("loadCSV", new LoadCSVHandler());
+  //    Spark.init();
+  //    Spark.awaitInitialization(); // don't continue until the server is listening
+  //  }
 
   @AfterEach
   public void teardown() {
@@ -57,7 +46,6 @@ public class SearchCSVHandlerTests {
     Spark.unmap("loadCSV");
     Spark.awaitStop(); // don't proceed until the server is stopped
   }
-
 
   /**
    * Helper to start a connection to a specific API endpoint/params
@@ -80,35 +68,37 @@ public class SearchCSVHandlerTests {
     return clientConnection;
   }
 
-//  @Test
-//  // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
-//  // checker
-//  public void testAPISearchCSV() throws IOException {
-//    String searchKeyword = "Barrington";
-//    HttpURLConnection clientConnection = tryRequest("searchCSV?searchKeyword="+searchKeyword);
-//    // Get an OK response (the *connection* worked, the *API* provides an error response)
-//    assertEquals(200, clientConnection.getResponseCode());
-//
-//    // Now we need to see whether we've got the expected Json response.
-//    // SoupAPIUtilities handles ingredient lists, but that's not what we've got here.
-//    // NOTE:   (How could we reduce the code repetition?)
-//    Moshi moshi = new Moshi.Builder().build();
-//
-//    // We'll use okio's Buffer class here
-//    System.out.println(clientConnection.getInputStream());
-//    SearchCSVHandler.SearchDataSuccessResponse response =
-//        moshi
-//            .adapter(SearchCSVHandler.SearchDataSuccessResponse.class)
-//            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
-//
-//    // TODO: do we create a new class that itself has CSV parameters? or do we have SearchCSVHandler take in these requirements?
-////    SearchCSVHandler carrot =
-////        new SearchCSVHandler();
-////
-////    Map<String, Object> result = (Map<String, Object>) response.responseMap().get("Carrot");
-////    System.out.println(result.get("ingredients"));
-////    assertEquals(carrot.getIngredients(), result.get("ingredients"));
-//    clientConnection.disconnect();
-//  }
+  //  @Test
+  //  // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the
+  // type
+  //  // checker
+  //  public void testAPISearchCSV() throws IOException {
+  //    String searchKeyword = "Barrington";
+  //    HttpURLConnection clientConnection = tryRequest("searchCSV?searchKeyword="+searchKeyword);
+  //    // Get an OK response (the *connection* worked, the *API* provides an error response)
+  //    assertEquals(200, clientConnection.getResponseCode());
+  //
+  //    // Now we need to see whether we've got the expected Json response.
+  //    // SoupAPIUtilities handles ingredient lists, but that's not what we've got here.
+  //    // NOTE:   (How could we reduce the code repetition?)
+  //    Moshi moshi = new Moshi.Builder().build();
+  //
+  //    // We'll use okio's Buffer class here
+  //    System.out.println(clientConnection.getInputStream());
+  //    SearchCSVHandler.SearchDataSuccessResponse response =
+  //        moshi
+  //            .adapter(SearchCSVHandler.SearchDataSuccessResponse.class)
+  //            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+  //
+  //    // TODO: do we create a new class that itself has CSV parameters? or do we have
+  // SearchCSVHandler take in these requirements?
+  ////    SearchCSVHandler carrot =
+  ////        new SearchCSVHandler();
+  ////
+  ////    Map<String, Object> result = (Map<String, Object>) response.responseMap().get("Carrot");
+  ////    System.out.println(result.get("ingredients"));
+  ////    assertEquals(carrot.getIngredients(), result.get("ingredients"));
+  //    clientConnection.disconnect();
+  //  }
 
 }
