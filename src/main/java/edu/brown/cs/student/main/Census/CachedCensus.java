@@ -38,7 +38,7 @@
 //                    @Override
 //                    public Object load(String key) throws Exception {
 //                        // If the data is not found in the cache, fetch it using the wrapped CensusHandler
-//                        return wrappedCensusHandler.handle(request, response); // Pass request and response to the handle method
+//                        return wrappedCensusHandler.handle(); // Pass request and response to the handle method
 //                    }
 //                });
 //    }
