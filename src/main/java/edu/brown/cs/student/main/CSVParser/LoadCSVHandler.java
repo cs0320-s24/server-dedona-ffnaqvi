@@ -14,15 +14,16 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.List;
 
+/**
+ * LoadCSVHandler is the endpoint class that serves as a proxy
+ * API for the localhost server and CSV file
+ */
 public class LoadCSVHandler implements Route {
 
   private List<List<String>> csvData;
   /**
-   * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
-   * the unordered set of recipe cards.
-   *
-   * <p>NOTE: beware this "return Object" and "throws Exception" idiom. We need to follow it because
-   * the library uses it, but in general this lowers the protection of the type system.
+   * The handle method requests a query from the user and returns a success
+   * code upon successful load of a valid file
    *
    * @param request the request to handle
    * @param response use to modify properties of the response
@@ -41,7 +42,7 @@ public class LoadCSVHandler implements Route {
       Server.fileName = fileName;
       Server.parser = new CSVParser<>(reader, creator);
       Server.parser.parse();
-      System.out.println("CSV Parser initialized successfully.");
+
       this.csvData = Server.parser.getParsedData();
 
       if (!this.csvData.isEmpty()) {
@@ -65,10 +66,8 @@ public class LoadCSVHandler implements Route {
 
   }
 
-  /*
-   * Ultimately up to you how you want to structure your success and failure responses, but they
-   * should be distinguishable in some form! We show one form here and another form in ActivityHandler
-   * and you are also free to do your own way!
+  /**
+   * Method to return a success reponse to the user
    */
 
   /** Response object to send, containing a soup with certain ingredients in it */

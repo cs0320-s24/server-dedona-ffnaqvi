@@ -9,6 +9,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to handle the API utilities specific to
+ */
 public class CensusAPIUtilities {
 
   /**

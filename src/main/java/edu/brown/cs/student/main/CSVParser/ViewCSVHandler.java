@@ -8,15 +8,15 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+/**
+ * ViewCSVHandler is a class that serves as an endpoint
+ * for the proxy server by displaying the results of a CSV
+ */
 public class ViewCSVHandler implements Route {
   private List<List<String>> csvData;
 
   /**
-   * Pick a convenient soup and make it. the most "convenient" soup is the first recipe we find in
-   * the unordered set of recipe cards.
-   *
-   * <p>NOTE: beware this "return Object" and "throws Exception" idiom. We need to follow it because
-   * the library uses it, but in general this lowers the protection of the type system.
+   * function to display a CSV if the CVS has been loaded
    *
    * @param request the request to handle
    * @param response use to modify properties of the response
@@ -40,13 +40,7 @@ public class ViewCSVHandler implements Route {
     }
   }
 
-  /*
-   * Ultimately up to you how you want to structure your success and failure responses, but they
-   * should be distinguishable in some form! We show one form here and another form in ActivityHandler
-   * and you are also free to do your own way!
-   */
-
-  /** Response object to send, containing a soup with certain ingredients in it */
+    /** Response object to send, displaying the constants of a CSV */
   public record ViewDataSuccessResponse(String response_type, String[][] data) {
     public ViewDataSuccessResponse(String[][] data) {
       this("success", data);
