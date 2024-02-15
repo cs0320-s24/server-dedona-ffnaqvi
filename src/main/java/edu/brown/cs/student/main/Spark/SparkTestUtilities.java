@@ -3,7 +3,7 @@ package edu.brown.cs.student.main.Spark;
 import spark.Request;
 import spark.Response;
 
-public class SparkUtilities {
+public class SparkTestUtilities {
 
   public static Request mockRequestWithParams() {
     // Create a mock request and manually set query parameters
@@ -31,7 +31,12 @@ public class SparkUtilities {
   }
 
   private static class MockRequest extends Request {
-    // You can add any necessary implementation for your mock request
+    // Implement queryParams method for mock request
+    @Override
+    public String queryParams(String queryParam) {
+      // Return whatever values you need for testing
+      return "MockQueryParamValue";
+    }
   }
 
   private static class MockResponse extends Response {
