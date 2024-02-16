@@ -25,7 +25,7 @@ public class CachedCensusHandler implements ACSDatasource {
   //initialize the datasource that gets pulled
 
   // a reference to an instance of the CensusHandler class.
-  private ACSDatasource original;
+  private CensusHandler wrappedCensusHandler;
 
   // a generic interface provided by the Guava library that represents a cache that loads its values
   // on demand.
@@ -33,11 +33,12 @@ public class CachedCensusHandler implements ACSDatasource {
 
   private String cacheKey;
 
-  public CachedCensusHandler(ACSDatasource datasource, int size, int timeMinutes) {
+  public CachedCensusHandler(/*CensusHandler wrappedCensusHandler,*/ int size, int timeMinutes) {
+//      datasource = this;
     //give it size, minutes
     //return og.getBroadband
     System.out.println("in caching");
-    this.original = datasource;
+//    this.original = datasource;
     //    this.cacheKey = this.generateCacheKey();
 
     this.cache =
@@ -47,13 +48,17 @@ public class CachedCensusHandler implements ACSDatasource {
             .build(
                 new CacheLoader<>() {
                   @Override
-                  public Object load(String key) throws Exception {
+                  public String load(String key) throws Exception {
                     cacheKey = key;
                     System.out.println(key);
+                    String[] codes = key.split(",");
+                    String stateCode = codes[0];
+                    String countyCode = codes[1];
                     // If the data is not found in the cache, fetch it using the wrapped
                     // CensusHandler
                     //returns String of body of request
-                    return datasource.sendRequest(); // Pass request and response to the handle method
+                      //NEED TO CALL THIS ON THE CENSUSHANDLER
+                    return wrappedCensusHandler.sendRequest(stateCode, countyCode); // Pass request and response to the handle method
                   }
                 });
   }
@@ -61,10 +66,16 @@ public class CachedCensusHandler implements ACSDatasource {
   @Override
   public String sendRequest(String stateCode, String countyCode) {
     // "get" is designed for concurrent situations; for today, use getUnchecked:
-    String result = cache.getUnchecked(this.cacheKey);
-    // For debugging and demo (would remove in a "real" version):
-    System.out.println(cache.stats());
-    return result;
+      this.cacheKey = stateCode + "," + countyCode;
+
+      String result = cache.getUnchecked(this.cacheKey);
+      // For debugging and demo (would remove in a "real" version):
+      System.out.println(cache.stats());
+      return result;
+  }
+
+  public void setCensusHandler(CensusHandler handler) {
+      this.wrappedCensusHandler = handler;
   }
 
 }

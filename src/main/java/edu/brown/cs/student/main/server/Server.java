@@ -22,7 +22,9 @@ public class Server {
   public static int loadStatus;
   public static CSVParser<List<String>> parser;
   public static String fileName;
-  public static ACSDatasource datasource;
+//  public static ACSDatasource datasource;
+  public static CensusHandler datasource;
+
   public static void main(String[] args) throws IOException {
 
     int port = 3231;
@@ -34,12 +36,11 @@ public class Server {
           response.header("Access-Control-Allow-Origin", "*");
           response.header("Access-Control-Allow-Methods", "*");
         });
-
     //class that implemenets ACS datasource = new object (datasource, size, tiem)
-    CachedCensusHandler caching = new CachedCensusHandler(datasource, 3, 1);
+    CachedCensusHandler caching = new CachedCensusHandler(/*datasource,*/ 3, 1);
 
     // Setting up the handler for the GET /census endpoints
-    Spark.get("broadband", new CensusHandler(datasource));
+    Spark.get("broadband", new CensusHandler(caching));
 
     // Setting up the handler for the CSV endpoints
     Spark.get("loadcvs", new LoadCSVHandler());
