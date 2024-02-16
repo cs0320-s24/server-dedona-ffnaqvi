@@ -6,6 +6,7 @@ import edu.brown.cs.student.main.CSVParser.CSVParser;
 import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
 import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
 import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
+import edu.brown.cs.student.main.Caching.CachedCensusHandler;
 import edu.brown.cs.student.main.Census.*;
 import java.io.IOException;
 import java.util.List;
@@ -23,7 +24,7 @@ public class Server {
   public static CachedCensusHandler cache;
   public static void main(String[] args) throws IOException {
 
-    int port = 3232;
+    int port = 3231;
 
     Spark.port(port);
 
@@ -34,12 +35,12 @@ public class Server {
         });
 
     // Setting up the handler for the GET /census endpoints
-    Spark.get("census", new CensusHandler(cache));
+    Spark.get("broadband", new CensusHandler(cache));
 
     // Setting up the handler for the CSV endpoints
-    Spark.get("loadCSV", new LoadCSVHandler());
-    Spark.get("viewCSV", new ViewCSVHandler());
-    Spark.get("searchCSV", new SearchCSVHandler());
+    Spark.get("loadcvs", new LoadCSVHandler());
+    Spark.get("viewcvs", new ViewCSVHandler());
+    Spark.get("searchcvs", new SearchCSVHandler());
 
     Spark.init();
     Spark.awaitInitialization();

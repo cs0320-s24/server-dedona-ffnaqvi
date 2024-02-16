@@ -3,6 +3,7 @@ package edu.brown.cs.student.main.Census;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import edu.brown.cs.student.main.Caching.CachedCensusHandler;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,6 +16,8 @@ import java.util.Map;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /** Class to serve as a proxy server between the user and the ACS API */
 public class CensusHandler implements Route {
@@ -79,9 +82,15 @@ public class CensusHandler implements Route {
       String censusJson = this.sendRequest(stateCode, countyCode);
       // Deserializes JSON into an Activity
       List<Census> census = CensusAPIUtilities.deserializeCensus(censusJson);
+      LocalDateTime currentDateTime = LocalDateTime.now();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      String formattedDateTime = currentDateTime.format(formatter);
       // Adds results to the responseMap
       responseMap.put("result", "success");
-      responseMap.put("census", census);
+      responseMap.put("Current Date and Time", formattedDateTime);
+      responseMap.put("State", state);
+      responseMap.put("County", county);
+      responseMap.put("Broadband Result", census);
       return responseMap;
     } catch (Exception e) {
       //      e.printStackTrace();
@@ -90,6 +99,10 @@ public class CensusHandler implements Route {
       // in learning to debug correctly by creating your own informative error messages where Spark
       // falls short.
       responseMap.put("result", "Exception");
+      // TODO: find where this error statement should go
+      if (this.stateCodes.get(state).equals(null)){
+        responseMap.put("error", "invalid state name");
+      }
     }
     new CachedCensusHandler(this, request, response);
 
