@@ -36,6 +36,7 @@ public class LoadCSVHandler implements Route {
 
     CreatorFromRow<List<String>> creator = new ListStringCreator();
 
+
     Reader reader = null;
 
     try {
@@ -53,14 +54,9 @@ public class LoadCSVHandler implements Route {
         Server.loadStatus = -1;
         return new LoadNoDataFailureResponse().serialize();
       }
-    } finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
+    } catch (Exception e) {
+      // in case of any exceptions
+      return new LoadNoDataFailureResponse().serialize();
     }
   }
 
@@ -93,7 +89,8 @@ public class LoadCSVHandler implements Route {
   /** Response object to send if someone requested data from an invalid csv */
   public record LoadNoDataFailureResponse(String response_type) {
     public LoadNoDataFailureResponse() {
-      this("error loading");
+      this(
+          "error loading, please ensure your file name is correct and within the datasource folder.");
     }
 
     /**

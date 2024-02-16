@@ -1,6 +1,7 @@
 package edu.brown.cs.student.main.Census;
 
 import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.Caching.ACSDatasource;
@@ -28,6 +29,11 @@ public class CensusHandler implements Route, ACSDatasource {
   public String countyCode;
   public ACSDatasource datasource;
 
+  /**
+   * Constructor to initialize private instance variables
+   *
+   * @param cachedCensusHandler
+   */
   public CensusHandler(ACSDatasource cachedCensusHandler) {
     // Initialize the stateCodes map when the handler is created
     this.stateCodes = getStateCodes();
@@ -43,37 +49,43 @@ public class CensusHandler implements Route, ACSDatasource {
    * @param response The response object providing functionality for modifying the response
    */
   @Override
-  public Object handle(Request request, Response response) throws IOException {
+  public Object handle(Request request, Response response)
+      throws IOException, URISyntaxException, InterruptedException {
 
-    String state = request.queryParams("state");
-    String stateCode = this.stateCodes.get(state);
-    this.stateCode = stateCode;
-    String countyCode;
-
-    /* In the case that the user does not enter a county param */
-    String county = request.queryParams("county");
-    if (county == null) {
-      county = "*";
-      countyCode = "*";
-    } else {
-      countyCode = getCountyCodes(stateCode, county);
-    }
-    this.countyCode = countyCode;
     // Creates a hashmap to store the results of the request
 
     Map<String, Object> responseMap = new HashMap<>();
     try {
+      String state = request.queryParams("state");
+
+      String stateCode = this.stateCodes.get(state);
+      if (stateCode == null) {
+        }
+      this.stateCode = stateCode;
+      String countyCode;
+
+      /* In the case that the user does not enter a county param */
+      String county = request.queryParams("county");
+      if (county == null) {
+        county = "*";
+        countyCode = "*";
+      } else {
+        countyCode = getCountyCodes(stateCode, county);
+      }
+      this.countyCode = countyCode;
+
       if (state == null) {
         throw new NullPointerException("No state param entered");
       }
       // Sends a request to the API and receives JSON back
       String censusJson = this.datasource.sendRequest(stateCode, countyCode);
-      //      String censusJson = this.sendRequest(stateCode, countyCode);
+
       // Deserializes JSON into an Activity
       List<Census> census = CensusAPIUtilities.deserializeCensus(censusJson);
       LocalDateTime currentDateTime = LocalDateTime.now();
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
       String formattedDateTime = currentDateTime.format(formatter);
+
       // Adds results to the responseMap
       responseMap.put("result", "success");
       responseMap.put("Current Date and Time", formattedDateTime);
@@ -81,17 +93,22 @@ public class CensusHandler implements Route, ACSDatasource {
       responseMap.put("County", county);
       responseMap.put("Broadband Result", census);
       return responseMap;
-    } catch (Exception e) {
-      //      e.printStackTrace();
+    }
+    catch (JsonDataException e) {
+      response.status(400);
+
+      responseMap.put("result", "error_bad_request");
+    }
+    catch (IOException e) {
       response.status(404);
-      // This is a relatively unhelpful exception message. An important part of this sprint will be
-      // in learning to debug correctly by creating your own informative error messages where Spark
-      // falls short.
-      responseMap.put("result", "Exception");
-      // TODO: find where this error statement should go
-      if (this.stateCodes.get(state).equals(null)) {
-        responseMap.put("error", "invalid state name");
-      }
+
+      responseMap.put("result", "error_bad_json");
+
+    }
+    catch (Exception e) {
+      response.status(404);
+
+      responseMap.put("result", "error_datasource");
     }
     return responseMap;
   }
@@ -132,10 +149,14 @@ public class CensusHandler implements Route, ACSDatasource {
     return sentCensusApiResponse.body();
   }
 
-  // TODO: FIX THIS BAD DESIGN
+  /**
+   * Method to set the datasource to the passed in datasource
+   *
+   * @param datasource
+   */
   @Override
   public void setDatasource(ACSDatasource datasource) {
-    // nothing needed here
+    this.datasource = datasource;
   }
 
   /**
@@ -195,7 +216,8 @@ public class CensusHandler implements Route, ACSDatasource {
    * @return a String of the countyCode
    * @throws IOException
    */
-  private String getCountyCodes(String stateCode, String targetCounty) throws IOException {
+  private String getCountyCodes(String stateCode, String targetCounty)
+      throws IOException, URISyntaxException, InterruptedException {
     try {
       // Send a request to the API to get county names and codes for a specific state
       HttpRequest request =
@@ -241,8 +263,7 @@ public class CensusHandler implements Route, ACSDatasource {
         }
       }
     } catch (IOException | InterruptedException | URISyntaxException e) {
-      e.printStackTrace();
-      // Handle the exception as needed
+      throw e;
     }
 
     // Return null if the county is not found

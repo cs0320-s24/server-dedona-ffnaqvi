@@ -6,6 +6,7 @@ import edu.brown.cs.student.main.Creators.ListStringCreator;
 import edu.brown.cs.student.main.Search.Search;
 import edu.brown.cs.student.main.server.Server;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -70,7 +71,8 @@ public class SearchCSVHandler implements Route {
             new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
         CSVParser<List<String>> parser =
             new CSVParser<>(
-                new BufferedReader(new FileReader("datasource/" + Server.fileName)), new ListStringCreator());
+                new BufferedReader(new FileReader("datasource/" + Server.fileName)),
+                new ListStringCreator());
         Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
         Object result = search.search();
         if (result.equals(1)){
@@ -92,11 +94,12 @@ public class SearchCSVHandler implements Route {
         this.csvData = search.getResultList();
 
         return new SearchDataSuccessResponse(this.csvData).serialize();
-      }
+
+
       catch (Exception e) {
         // Handle any other unexpected exceptions
         e.printStackTrace();
-        throw new RuntimeException("Unexpected error during processing: " + e.getMessage());
+        System.out.println("Your file was not found.");
       }
     }
     if (Server.loadStatus != 200) {
