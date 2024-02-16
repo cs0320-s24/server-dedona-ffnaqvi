@@ -3,6 +3,7 @@ package edu.brown.cs.student.main.Census;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import edu.brown.cs.student.main.Caching.ACSDatasource;
 import edu.brown.cs.student.main.Caching.CachedCensusHandler;
 import java.io.IOException;
 import java.net.URI;
@@ -26,13 +27,13 @@ public class CensusHandler implements Route {
   private Map<String, String> stateCodes;
   public String stateCode;
   public String countyCode;
-  public CachedCensusHandler cache;
+  public ACSDatasource datasource;
 
-  public CensusHandler(CachedCensusHandler pCache) {
+  public CensusHandler(ACSDatasource pDatasource) {
     // Initialize the stateCodes map when the handler is created
     this.stateCodes = getStateCodes();
 
-    this.cache = pCache;
+    this.datasource = pDatasource;
   }
 
   /**
@@ -60,18 +61,6 @@ public class CensusHandler implements Route {
     }
     this.countyCode = countyCode;
     // Creates a hashmap to store the results of the request
-
-    Boolean wantCaching;
-    try {
-      wantCaching = Boolean.parseBoolean(request.queryParams("cache"));
-    }
-    catch (Exception e) {
-      wantCaching = false;
-    }
-
-    if (wantCaching) {
-
-    }
 
     Map<String, Object> responseMap = new HashMap<>();
     try {
@@ -104,8 +93,6 @@ public class CensusHandler implements Route {
         responseMap.put("error", "invalid state name");
       }
     }
-    new CachedCensusHandler(this, request, response);
-
     return responseMap;
   }
 
