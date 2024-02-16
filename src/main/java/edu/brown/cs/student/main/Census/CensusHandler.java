@@ -21,19 +21,20 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /** Class to serve as a proxy server between the user and the ACS API */
-public class CensusHandler implements Route {
+public class CensusHandler implements Route /*, ACSDatasource*/ {
 
   private String apiKey = "c4dae4f067d4a604595239338bf6e62c93bcdc34";
   private Map<String, String> stateCodes;
   public String stateCode;
   public String countyCode;
-  public ACSDatasource datasource;
+  public CachedCensusHandler datasource;
 
-  public CensusHandler(ACSDatasource pDatasource) {
+  public CensusHandler(CachedCensusHandler cachedCensusHandler) {
     // Initialize the stateCodes map when the handler is created
     this.stateCodes = getStateCodes();
-
-    this.datasource = pDatasource;
+//    pDatasource = this;
+    this.datasource = cachedCensusHandler;
+    this.datasource.setCensusHandler(this);
   }
 
   /**
@@ -107,6 +108,7 @@ public class CensusHandler implements Route {
    * @throws IOException
    * @throws InterruptedException
    */
+//  @Override
   public String sendRequest(String stateCode, String countyCode)
       throws URISyntaxException, IOException, InterruptedException {
 
