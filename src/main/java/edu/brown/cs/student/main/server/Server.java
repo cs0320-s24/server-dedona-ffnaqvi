@@ -34,7 +34,7 @@ public class Server {
           response.header("Access-Control-Allow-Methods", "*");
         });
 
-    CachedCensusHandler caching = new CachedCensusHandler(3, 1);
+    CachedCensusHandler caching = new CachedCensusHandler(3, 2);
 
     // Setting up the handler for the GET /census endpoints
     Spark.get("broadband", new CensusHandler(caching));
