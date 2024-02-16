@@ -1,5 +1,8 @@
 package edu.brown.cs.student.main.Census;
 
+/**
+ * Class for JSon serialization and deserialization
+ */
 public class Census {
   private String NAME;
   private Double S2802_C03_022E;

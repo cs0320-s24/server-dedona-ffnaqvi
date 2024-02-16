@@ -3,6 +3,7 @@ package edu.brown.cs.student.main.Census;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
 import edu.brown.cs.student.main.Caching.ACSDatasource;
 import java.io.IOException;
 import java.net.URI;
@@ -28,6 +29,11 @@ public class CensusHandler implements Route, ACSDatasource {
   public String countyCode;
   public ACSDatasource datasource;
 
+  /**
+   * Constructor to initialize private instance variables
+   *
+   * @param cachedCensusHandler
+   */
   public CensusHandler(ACSDatasource cachedCensusHandler) {
     // Initialize the stateCodes map when the handler is created
     this.stateCodes = getStateCodes();
@@ -68,12 +74,13 @@ public class CensusHandler implements Route, ACSDatasource {
       }
       // Sends a request to the API and receives JSON back
       String censusJson = this.datasource.sendRequest(stateCode, countyCode);
-      //      String censusJson = this.sendRequest(stateCode, countyCode);
+
       // Deserializes JSON into an Activity
       List<Census> census = CensusAPIUtilities.deserializeCensus(censusJson);
       LocalDateTime currentDateTime = LocalDateTime.now();
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
       String formattedDateTime = currentDateTime.format(formatter);
+
       // Adds results to the responseMap
       responseMap.put("result", "success");
       responseMap.put("Current Date and Time", formattedDateTime);
@@ -81,17 +88,12 @@ public class CensusHandler implements Route, ACSDatasource {
       responseMap.put("County", county);
       responseMap.put("Broadband Result", census);
       return responseMap;
-    } catch (Exception e) {
-      //      e.printStackTrace();
+    }
+    catch (Exception e) {
       response.status(404);
-      // This is a relatively unhelpful exception message. An important part of this sprint will be
-      // in learning to debug correctly by creating your own informative error messages where Spark
-      // falls short.
-      responseMap.put("result", "Exception");
-      // TODO: find where this error statement should go
-      if (this.stateCodes.get(state).equals(null)) {
-        responseMap.put("error", "invalid state name");
-      }
+
+      responseMap.put("result", "Exception: " + e.getLocalizedMessage());
+
     }
     return responseMap;
   }
@@ -132,10 +134,13 @@ public class CensusHandler implements Route, ACSDatasource {
     return sentCensusApiResponse.body();
   }
 
-  // TODO: FIX THIS BAD DESIGN
+  /**
+   * Method to set the datasource to the passed in datasource
+   * @param datasource
+   */
   @Override
   public void setDatasource(ACSDatasource datasource) {
-    // nothing needed here
+    this.datasource = datasource;
   }
 
   /**
@@ -247,5 +252,20 @@ public class CensusHandler implements Route, ACSDatasource {
 
     // Return null if the county is not found
     throw new IOException("No found county");
+  }
+
+  /** Response object to send error message to user*/
+  public record CensusDataFailureResponse(String response_type, String errorMessage) {
+    public CensusDataFailureResponse(String errorMessage) {
+      this("error searching", errorMessage);
+    }
+
+    /**
+     * @return this response, serialized as Json
+     */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(CensusDataFailureResponse.class).toJson(this);
+    }
   }
 }

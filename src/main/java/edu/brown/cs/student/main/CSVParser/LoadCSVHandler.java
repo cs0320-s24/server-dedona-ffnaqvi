@@ -89,7 +89,7 @@ public class LoadCSVHandler implements Route {
   /** Response object to send if someone requested data from an invalid csv */
   public record LoadNoDataFailureResponse(String response_type) {
     public LoadNoDataFailureResponse() {
-      this("error loading, please ensure your file name is correct and within the data folder.");
+      this("error loading, please ensure your file name is correct and within the datasource folder.");
     }
 
     /**
