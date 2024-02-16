@@ -1,6 +1,7 @@
 package edu.brown.cs.student.main.Census;
 
 import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.Caching.ACSDatasource;
@@ -59,8 +60,7 @@ public class CensusHandler implements Route, ACSDatasource {
 
       String stateCode = this.stateCodes.get(state);
       if (stateCode == null) {
-        throw new NullPointerException("Your state doesn't exist.");
-      }
+        }
       this.stateCode = stateCode;
       String countyCode;
 
@@ -93,10 +93,22 @@ public class CensusHandler implements Route, ACSDatasource {
       responseMap.put("County", county);
       responseMap.put("Broadband Result", census);
       return responseMap;
-    } catch (Exception e) {
+    }
+    catch (JsonDataException e) {
+      response.status(400);
+
+      responseMap.put("result", "error_bad_request");
+    }
+    catch (IOException e) {
       response.status(404);
 
-      responseMap.put("result", "Exception: " + e);
+      responseMap.put("result", "error_bad_json");
+
+    }
+    catch (Exception e) {
+      response.status(404);
+
+      responseMap.put("result", "error_datasource");
     }
     return responseMap;
   }

@@ -15,7 +15,7 @@
 // import spark.Spark;
 //
 // public class TestCensusHandler {
-//
+// Hey, I just ran into this. The fix was changing the beforeAll into beforeClass for that setup method. Another fix was only having that method  in the first test file
 //  @BeforeAll
 //  public static void setup_before_everything() {
 //    // Set the Spark port number.
