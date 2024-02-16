@@ -67,17 +67,17 @@ public class SearchCSVHandler implements Route {
                 new BufferedReader(new FileReader("datasource/" + Server.fileName)),
                 new ListStringCreator());
         Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
-        Object result = search.search();
-        if (result.equals(1)) {
+        int result = search.search();
+        if (result == 1) {
           return new SearchCSVHandler.SearchDataFailureResponse(
               "Invalid column index, please check your CSV file");
-        } else if (result.equals(2)) {
+        } else if (result ==2) {
           return new SearchCSVHandler.SearchDataFailureResponse(
               "Invalid column name, please check your CSV headers");
-        } else if (result.equals(3)) {
+        } else if (result == 3) {
           return new SearchCSVHandler.SearchDataFailureResponse(
               "Could not find any corresponding data");
-        } else if (result.equals(4)) {
+        } else if (result == 4) {
           return new SearchCSVHandler.SearchDataFailureResponse("Error in Searching");
         }
 

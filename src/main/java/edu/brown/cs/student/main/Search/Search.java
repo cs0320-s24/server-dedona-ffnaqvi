@@ -28,7 +28,7 @@ public class Search {
     this.resultList = new ArrayList<>();
   }
 
-  public Object search() {
+  public int search() {
 
     try {
       // initialize a List<List<String>> to hold the parsed data
@@ -81,7 +81,7 @@ public class Search {
       // Handle the IOException according to your error handling strategy
       return 4; // new Search.SearchDataFailureResponse("Error in Searching");
     }
-    return null;
+    return 0;
   }
 
   /**
