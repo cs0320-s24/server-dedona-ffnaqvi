@@ -58,7 +58,7 @@ public class SearchCSVHandler implements Route {
             new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
         CSVParser<List<String>> parser =
             new CSVParser<>(
-                new BufferedReader(new FileReader(Server.fileName)), new ListStringCreator());
+                new BufferedReader(new FileReader("datasource/" + Server.fileName)), new ListStringCreator());
         Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
 
         search.search();
