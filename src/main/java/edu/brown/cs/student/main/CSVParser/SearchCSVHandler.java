@@ -8,6 +8,7 @@ import edu.brown.cs.student.main.server.Server;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import spark.Request;
@@ -35,21 +36,32 @@ public class SearchCSVHandler implements Route {
     // Get Query parameters, can be used to make your search more specific
 
     if (Server.loadStatus == 200) {
+
       String searchValue = request.queryParams("searchValue");
+        if (searchValue == null){
+          return new SearchDataFailureResponse("no search value found, please enter a value to search for by using \"http://localhost:3232/searchcsv?searchValue=&lt;value&gt;.\""
+              + " Other parameters include \"hasHeaders=&lt;boolean&gt;\", \"columnNameIdentifier=&lt;string&gt;\", and  \"columnIndexIdentifier=&lt;int&gt;\" ");
+        }
+
       boolean hasHeaders = Boolean.parseBoolean(request.queryParams("hasHeaders"));
-      String columnNameIdentifier;
-      Integer columnIndexIdentifier;
+//      if (hasHeaders == true || hasHeaders == false || hasHeaders == null){
+//      }
+//      else{
+//
+//      }
+      String columnNameIdentifier = null;
+      Integer columnIndexIdentifier = null;
 
       try {
         columnNameIdentifier = request.queryParams("columnNameIdentifier");
       } catch (NullPointerException e) {
-        columnNameIdentifier = null;
+
       }
 
       try {
         columnIndexIdentifier = Integer.parseInt(request.queryParams("columnIndexIdentifier"));
       } catch (NullPointerException | NumberFormatException e) {
-        columnIndexIdentifier = null;
+
       }
 
       try {
@@ -60,12 +72,28 @@ public class SearchCSVHandler implements Route {
             new CSVParser<>(
                 new BufferedReader(new FileReader("datasource/" + Server.fileName)), new ListStringCreator());
         Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
+        Object result = search.search();
+        if (result.equals(1)){
+          return new SearchCSVHandler.SearchDataFailureResponse("Invalid column index, please check your CSV file");
+        }
+        else if (result.equals(2)){
+          return new SearchCSVHandler.SearchDataFailureResponse("Invalid column name, please check your CSV headers");
+        }
+        else if (result.equals(3)){
+          return new SearchCSVHandler.SearchDataFailureResponse("Could not find any corresponding data");
+        }
+        else if (result.equals(4)){
+          return new SearchCSVHandler.SearchDataFailureResponse("Error in Searching");
+        }
+
+
 
         search.search();
         this.csvData = search.getResultList();
 
         return new SearchDataSuccessResponse(this.csvData).serialize();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         // Handle any other unexpected exceptions
         e.printStackTrace();
         throw new RuntimeException("Unexpected error during processing: " + e.getMessage());
@@ -74,7 +102,7 @@ public class SearchCSVHandler implements Route {
     if (Server.loadStatus != 200) {
       return new SearchDataFailureResponse("The CSV has not been loaded yet").serialize();
     }
-    return new SearchDataFailureResponse().serialize();
+    return new SearchDataFailureResponse("").serialize();
   }
 
   /** Response object to send, containing the requested data */
@@ -103,9 +131,9 @@ public class SearchCSVHandler implements Route {
   }
 
   /** Response object to send if someone requested data from an invalid csv */
-  public record SearchDataFailureResponse(String response_type) {
-    public SearchDataFailureResponse() {
-      this("error searching");
+  public record SearchDataFailureResponse(String response_type, String reply) {
+    public SearchDataFailureResponse(String reply) {
+      this("error searching", reply);
     }
 
     /**

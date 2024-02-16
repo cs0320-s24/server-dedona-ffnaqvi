@@ -1,8 +1,12 @@
 package edu.brown.cs.student.main.Search;
 
+import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.CSVParser.CSVParser;
+import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
+import edu.brown.cs.student.main.CSVParser.SearchCSVHandler.SearchDataFailureResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +29,12 @@ public class Search {
     this.columnIdentifier = columnIdentifier;
     this.hasHeader = hasHeader;
     this.resultList = new ArrayList<>();
+
   }
 
-  public void search() {
-    try {
+  public Object search() {
 
+    try {
       // initialize a List<List<String>> to hold the parsed data
       this.parser.parse();
       List<List<String>> parsedData = this.parser.getParsedData();
@@ -56,7 +61,7 @@ public class Search {
           System.out.println("Rows that match your search");
           printMatchingRows(parsedData, intColumnIdentifier);
         } else {
-          throw new IndexOutOfBoundsException("Invalid column index.");
+          return 1;//new Search.SearchDataFailureResponse("Invalid column index, max index number is"+(numCols-1));
         }
       } else {
         // print all rows that contain the "searchValue" in the column with the name
@@ -67,19 +72,18 @@ public class Search {
           System.out.println("Rows that match your search");
           printMatchingRows(parsedData, columnIndex);
         } else {
-          System.out.println("Column not found: " + strColumnIdentifier);
+          return 2;//new Search.SearchDataFailureResponse("Invalid column name, please check your CSV headers");
         }
       }
       if (this.resultList.isEmpty()) {
-        System.out.println("\nCould not find any corresponding data.");
+        return 3;//new Search.SearchDataFailureResponse("Could not find any corresponding data");
       }
 
     } catch (IOException e) {
       // Handle the IOException according to your error handling strategy
-      System.out.println("Error in Searching");
-      e.printStackTrace();
-      System.out.println("Error in Searching: " + e.getMessage());
+      return 4; //new Search.SearchDataFailureResponse("Error in Searching");
     }
+    return null;
   }
 
   /**
@@ -132,5 +136,20 @@ public class Search {
       }
     }
     return -1; // Return -1 if the column name is not found
+  }
+
+  /** Response object to send if someone requested data from an invalid csv */
+  public record SearchDataFailureResponse(String response_type, String reply) {
+    public SearchDataFailureResponse(String reply) {
+      this("error searching", reply);
+    }
+
+    /**
+     * @return this response, serialized as Json
+     */
+    String serialize() {
+      Moshi moshi = new Moshi.Builder().build();
+      return moshi.adapter(Search.SearchDataFailureResponse.class).toJson(this);
+    }
   }
 }
