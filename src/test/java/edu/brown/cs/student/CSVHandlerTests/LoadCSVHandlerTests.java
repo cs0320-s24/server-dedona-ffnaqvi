@@ -18,82 +18,138 @@ import spark.Spark;
 
 public class LoadCSVHandlerTests {
 
+  private static final String API_ENDPOINT = "loadCSV";
+  private static final int SUCCESS_RESPONSE_CODE = 200;
+
   @BeforeAll
   public static void setup_before_everything() {
-    // Set the Spark port number. This can only be done once, and has to
-    // Setting port 0 will cause Spark to use an arbitrary available port.
     Spark.port(0);
-
-    // Changing the JDK *ROOT* logger's level (not global) will block messages
-    //   (assuming using JDK, not Log4J)
-    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+    Logger.getLogger("").setLevel(Level.WARNING);
   }
-
-  /**
-   * Shared state for all tests. We need to be able to mutate it (adding recipes etc.) but never
-   * need to replace the reference itself. We clear this state out after every test runs.
-   */
-  // TODO: add any static variables needed, etc: final List<Income> income = new ArrayList<>();
 
   @BeforeEach
   public void setup() {
-    // Re-initialize state, etc. for _every_ test method run
-    // TODO: add any static variables needed, etc: this.income.clear();
-
-    // In fact, restart the entire Spark server for every test!
-    Spark.get("loadCSV", new LoadCSVHandler());
+    Spark.get(API_ENDPOINT, new LoadCSVHandler());
     Spark.init();
-    Spark.awaitInitialization(); // don't continue until the server is listening
+    Spark.awaitInitialization();
   }
 
   @AfterEach
   public void teardown() {
-    // Gracefully stop Spark listening on both endpoints after each test
-    Spark.unmap("loadCSV");
-    Spark.awaitStop(); // don't proceed until the server is stopped
+    Spark.unmap(API_ENDPOINT);
+    Spark.awaitStop();
   }
 
-  /**
-   * Helper to start a connection to a specific API endpoint/params
-   *
-   * @param apiCall the call string, including endpoint (NOTE: this would be better if it had more
-   *     structure!)
-   * @return the connection for the given URL, just after connecting
-   * @throws IOException if the connection fails for some reason
-   */
   private static HttpURLConnection tryRequest(String apiCall) throws IOException {
-    // Configure the connection (but don't actually send the request yet)
     URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
-
-    // The default method is "GET", which is what we're using here.
-    // If we were using "POST", we'd need to say so.
     clientConnection.setRequestMethod("GET");
-
     clientConnection.connect();
     return clientConnection;
   }
 
+  /**
+   * Test for checking if a user can connect to a regular file in the datasource file
+   *
+   * @throws IOException
+   */
   @Test
-  // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
-  // checker
   public void testAPIReadCSV() throws IOException {
-    String fileName = "ri_city_income.csv";
-    HttpURLConnection clientConnection = tryRequest("loadCSV?fileName=datasource/" + fileName);
-    // Get an OK response (the *connection* worked, the *API* provides an error response)
-    assertEquals(200, clientConnection.getResponseCode());
+    //______________________________________________
+    // testing one file
+    //______________________________________________
+    String fileName1 = "ri_city_income.csv";
+    HttpURLConnection clientConnection1 = tryRequest(API_ENDPOINT + "?fileName=" + fileName1);
+    assertEquals(SUCCESS_RESPONSE_CODE, clientConnection1.getResponseCode());
 
-    // Now we need to see whether we've got the expected Json response.
-    // SoupAPIUtilities handles ingredient lists, but that's not what we've got here.
+    Moshi moshi1 = new Moshi.Builder().build();
+    LoadCSVHandler.LoadNoDataFailureResponse response1 =
+        moshi1
+            .adapter(LoadCSVHandler.LoadNoDataFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection1.getInputStream()));
+
+    Logger.getLogger(LoadCSVHandlerTests.class.getName()).info(response1.toString());
+
+    clientConnection1.disconnect();
+
+    //______________________________________________
+    // testing another file
+    //______________________________________________
+    String fileName2 = "ri_city_income.csv";
+    HttpURLConnection clientConnection2 = tryRequest(API_ENDPOINT + "?fileName=" + fileName2);
+    assertEquals(SUCCESS_RESPONSE_CODE, clientConnection2.getResponseCode());
+
+    Moshi moshi2 = new Moshi.Builder().build();
+    LoadCSVHandler.LoadNoDataFailureResponse response2 =
+        moshi2
+            .adapter(LoadCSVHandler.LoadNoDataFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
+
+    // Use logger for better logging and debugging
+    Logger.getLogger(LoadCSVHandlerTests.class.getName()).info(response2.toString());
+
+    clientConnection2.disconnect();
+
+    //______________________________________________
+    // yet another file...
+    //______________________________________________
+    String fileName3 = "ri_city_income.csv";
+    HttpURLConnection clientConnection3 = tryRequest(API_ENDPOINT + "?fileName=" + fileName3);
+    assertEquals(SUCCESS_RESPONSE_CODE, clientConnection3.getResponseCode());
+
+    Moshi moshi3 = new Moshi.Builder().build();
+    LoadCSVHandler.LoadNoDataFailureResponse response3 =
+        moshi3
+            .adapter(LoadCSVHandler.LoadNoDataFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection3.getInputStream()));
+
+    // Use logger for better logging and debugging
+    Logger.getLogger(LoadCSVHandlerTests.class.getName()).info(response3.toString());
+
+    clientConnection3.disconnect();
+  }
+
+  /**
+   * Test for checking if an invalid file results in a loadStatus of 500
+   *
+   * @throws IOException
+   */
+  @Test
+  public void testAPIReadCSVWithInvalidFilename() throws IOException {
+    String invalidFileName = "nonexistent_file.csv";
+    HttpURLConnection clientConnection = tryRequest(API_ENDPOINT + "?fileName=" + invalidFileName);
+    assertEquals(500, clientConnection.getResponseCode());
+
     Moshi moshi = new Moshi.Builder().build();
-    // We'll use okio's Buffer class here
     LoadCSVHandler.LoadNoDataFailureResponse response =
         moshi
             .adapter(LoadCSVHandler.LoadNoDataFailureResponse.class)
             .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
-    System.out.println(response);
+    Logger.getLogger(LoadCSVHandlerTests.class.getName()).info(response.toString());
 
     clientConnection.disconnect();
   }
+
+  /**
+   * Test for checking if no file or parameter at all results in a loadStatus of 500
+   *
+   * @throws IOException
+   */
+  @Test
+  public void testAPIReadCSVWithNoFileName() throws IOException {
+    HttpURLConnection clientConnection = tryRequest(API_ENDPOINT);
+    assertEquals(500, clientConnection.getResponseCode());
+
+    Moshi moshi = new Moshi.Builder().build();
+    LoadCSVHandler.LoadNoDataFailureResponse response =
+        moshi
+            .adapter(LoadCSVHandler.LoadNoDataFailureResponse.class)
+            .fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    Logger.getLogger(LoadCSVHandlerTests.class.getName()).info(response.toString());
+
+    clientConnection.disconnect();
+  }
+
 }
