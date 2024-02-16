@@ -97,7 +97,7 @@ public class CensusHandler implements Route, ACSDatasource {
 
       responseMap.put("result", "error_bad_request");
     } catch (IOException e) {
-      response.status(404);
+      response.status(400);
 
       responseMap.put("result", "error_bad_json");
 

@@ -65,21 +65,12 @@ public class TestCensusHandler {
   }
 
   @Test
-  public void testNoState() throws IOException {
-    HttpURLConnection clientConnection = tryRequest("broadband");
-    // Get an OK response (the *connection* worked, the *API* provides an error response)
-    assertEquals(404, clientConnection.getResponseCode());
-
-    // check response?
-
-    clientConnection.disconnect();
-  }
-
-  @Test
+  // tests when a state doesn't exist (badrequest)
   public void testWrongState() throws IOException {
     HttpURLConnection clientConnection = tryRequest("broadband?state=hello");
     // Get an OK response (the *connection* worked, the *API* provides an error response)
-    assertEquals(404, clientConnection.getResponseCode());
+    assertEquals(400, clientConnection.getResponseCode());
+
     clientConnection.disconnect();
   }
 
@@ -102,6 +93,39 @@ public class TestCensusHandler {
         tryRequest("broadband?state=California&county=Kings%20County");
 
     assertEquals(200, clientConnection.getResponseCode());
+
+    clientConnection.disconnect();
+  }
+
+  @Test
+  // Check for when a json is not well formed (bad json)
+  public void testBadJsonError() throws IOException {
+    HttpURLConnection clientConnection =
+            tryRequest("broadband?STATE=California&COUNTY=Kings County");
+
+    assertEquals(400, clientConnection.getResponseCode());
+
+    clientConnection.disconnect();
+  }
+
+  @Test
+  // Check for when a field is missing (bad request)
+  public void testBadRequestError() throws IOException {
+    HttpURLConnection clientConnection =
+            tryRequest("broadband?state=");
+
+    assertEquals(400, clientConnection.getResponseCode());
+
+    clientConnection.disconnect();
+  }
+
+  @Test
+  // Tests when a file doesn't exist (datasource error)
+  public void testDatasourceError() throws IOException {
+    HttpURLConnection clientConnection =
+            tryRequest("broadband");
+
+    assertEquals(404, clientConnection.getResponseCode());
 
     clientConnection.disconnect();
   }
