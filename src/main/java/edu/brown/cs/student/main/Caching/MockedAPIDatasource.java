@@ -1,9 +1,11 @@
 package edu.brown.cs.student.main.Caching;
 
+import edu.brown.cs.student.main.Census.Census;
 import edu.brown.cs.student.main.Census.CensusHandler;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 /** Class that mocks the ACS Datasource */
@@ -16,6 +18,11 @@ public class MockedAPIDatasource implements ACSDatasource {
     this.constantMap = map;
   }
 
+
+  public  Map<String, Object> mockAPICall(String state, String county){
+    return this.constantMap;
+  }
+
   @Override
   public String sendRequest(String stateCode, String countyCode) throws URISyntaxException, IOException, InterruptedException {
     return this.constantMap.toString();
@@ -26,3 +33,5 @@ public class MockedAPIDatasource implements ACSDatasource {
     this.constantData = datasource;
   }
 }
+
+
