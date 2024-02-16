@@ -8,7 +8,6 @@ import edu.brown.cs.student.main.server.Server;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import spark.Request;
@@ -38,17 +37,18 @@ public class SearchCSVHandler implements Route {
     if (Server.loadStatus == 200) {
 
       String searchValue = request.queryParams("searchValue");
-      if (searchValue == null){
-        return new SearchDataFailureResponse("no search value found, please enter a value to search for by using \"http://localhost:3232/searchcsv?searchValue=&lt;value&gt;.\""
+      if (searchValue == null) {
+        return new SearchDataFailureResponse(
+            "no search value found, please enter a value to search for by using \"http://localhost:3232/searchcsv?searchValue=&lt;value&gt;.\""
                 + " Other parameters include \"hasHeaders=&lt;boolean&gt;\", \"columnNameIdentifier=&lt;string&gt;\", and  \"columnIndexIdentifier=&lt;int&gt;\" ");
       }
 
       boolean hasHeaders = Boolean.parseBoolean(request.queryParams("hasHeaders"));
-//      if (hasHeaders == true || hasHeaders == false || hasHeaders == null){
-//      }
-//      else{
-//
-//      }
+      //      if (hasHeaders == true || hasHeaders == false || hasHeaders == null){
+      //      }
+      //      else{
+      //
+      //      }
       String columnNameIdentifier = null;
       Integer columnIndexIdentifier = null;
 
@@ -67,33 +67,31 @@ public class SearchCSVHandler implements Route {
       try {
 
         Map.Entry<String, Integer> columnIdentifier =
-                new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
+            new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
         CSVParser<List<String>> parser =
-                new CSVParser<>(
-                        new BufferedReader(new FileReader("datasource/" + Server.fileName)), new ListStringCreator());
+            new CSVParser<>(
+                new BufferedReader(new FileReader("datasource/" + Server.fileName)),
+                new ListStringCreator());
         Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
         Object result = search.search();
-        if (result.equals(1)){
-          return new SearchCSVHandler.SearchDataFailureResponse("Invalid column index, please check your CSV file");
-        }
-        else if (result.equals(2)){
-          return new SearchCSVHandler.SearchDataFailureResponse("Invalid column name, please check your CSV headers");
-        }
-        else if (result.equals(3)){
-          return new SearchCSVHandler.SearchDataFailureResponse("Could not find any corresponding data");
-        }
-        else if (result.equals(4)){
+        if (result.equals(1)) {
+          return new SearchCSVHandler.SearchDataFailureResponse(
+              "Invalid column index, please check your CSV file");
+        } else if (result.equals(2)) {
+          return new SearchCSVHandler.SearchDataFailureResponse(
+              "Invalid column name, please check your CSV headers");
+        } else if (result.equals(3)) {
+          return new SearchCSVHandler.SearchDataFailureResponse(
+              "Could not find any corresponding data");
+        } else if (result.equals(4)) {
           return new SearchCSVHandler.SearchDataFailureResponse("Error in Searching");
         }
-
-
 
         search.search();
         this.csvData = search.getResultList();
 
         return new SearchDataSuccessResponse(this.csvData).serialize();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         // Handle any other unexpected exceptions
         e.printStackTrace();
         throw new RuntimeException("Unexpected error during processing: " + e.getMessage());
@@ -118,7 +116,7 @@ public class SearchCSVHandler implements Route {
         // Initialize Moshi which takes in this class and returns it as JSON!
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<SearchDataSuccessResponse> adapter =
-                moshi.adapter(SearchDataSuccessResponse.class);
+            moshi.adapter(SearchDataSuccessResponse.class);
         return adapter.toJson(this);
       } catch (Exception e) {
         // For debugging purposes, show in the console _why_ this fails

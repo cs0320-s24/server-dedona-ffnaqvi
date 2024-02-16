@@ -36,7 +36,6 @@ public class LoadCSVHandler implements Route {
 
     CreatorFromRow<List<String>> creator = new ListStringCreator();
 
-
     Reader reader = null;
 
     try {

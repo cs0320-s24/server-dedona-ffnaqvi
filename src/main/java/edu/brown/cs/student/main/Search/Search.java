@@ -2,11 +2,8 @@ package edu.brown.cs.student.main.Search;
 
 import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.CSVParser.CSVParser;
-import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
-import edu.brown.cs.student.main.CSVParser.SearchCSVHandler.SearchDataFailureResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +26,6 @@ public class Search {
     this.columnIdentifier = columnIdentifier;
     this.hasHeader = hasHeader;
     this.resultList = new ArrayList<>();
-
   }
 
   public Object search() {
@@ -61,7 +57,8 @@ public class Search {
           System.out.println("Rows that match your search");
           printMatchingRows(parsedData, intColumnIdentifier);
         } else {
-          return 1;//new Search.SearchDataFailureResponse("Invalid column index, max index number is"+(numCols-1));
+          return 1; // new Search.SearchDataFailureResponse("Invalid column index, max index number
+          // is"+(numCols-1));
         }
       } else {
         // print all rows that contain the "searchValue" in the column with the name
@@ -72,16 +69,17 @@ public class Search {
           System.out.println("Rows that match your search");
           printMatchingRows(parsedData, columnIndex);
         } else {
-          return 2;//new Search.SearchDataFailureResponse("Invalid column name, please check your CSV headers");
+          return 2; // new Search.SearchDataFailureResponse("Invalid column name, please check your
+          // CSV headers");
         }
       }
       if (this.resultList.isEmpty()) {
-        return 3;//new Search.SearchDataFailureResponse("Could not find any corresponding data");
+        return 3; // new Search.SearchDataFailureResponse("Could not find any corresponding data");
       }
 
     } catch (IOException e) {
       // Handle the IOException according to your error handling strategy
-      return 4; //new Search.SearchDataFailureResponse("Error in Searching");
+      return 4; // new Search.SearchDataFailureResponse("Error in Searching");
     }
     return null;
   }

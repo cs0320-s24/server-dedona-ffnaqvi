@@ -11,14 +11,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testng.annotations.BeforeClass;
 import spark.Spark;
 
 public class LoadCSVHandlerTests {
 
-  @BeforeAll
+  @BeforeClass
   public static void setup_before_everything() {
     // Set the Spark port number. This can only be done once, and has to
     // Setting port 0 will cause Spark to use an arbitrary available port.

@@ -59,8 +59,7 @@ public class CensusHandler implements Route, ACSDatasource {
       String state = request.queryParams("state");
 
       String stateCode = this.stateCodes.get(state);
-      if (stateCode == null) {
-        }
+      if (stateCode == null) {}
       this.stateCode = stateCode;
       String countyCode;
 
@@ -93,19 +92,16 @@ public class CensusHandler implements Route, ACSDatasource {
       responseMap.put("County", county);
       responseMap.put("Broadband Result", census);
       return responseMap;
-    }
-    catch (JsonDataException e) {
+    } catch (JsonDataException e) {
       response.status(400);
 
       responseMap.put("result", "error_bad_request");
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       response.status(404);
 
       responseMap.put("result", "error_bad_json");
 
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       response.status(404);
 
       responseMap.put("result", "error_datasource");
