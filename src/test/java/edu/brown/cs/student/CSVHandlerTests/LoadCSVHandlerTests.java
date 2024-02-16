@@ -11,17 +11,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testng.annotations.BeforeClass;
 import spark.Spark;
 
 public class LoadCSVHandlerTests {
 
   private static final String API_ENDPOINT = "loadCSV";
   private static final int SUCCESS_RESPONSE_CODE = 200;
-
-  @BeforeAll
+  
+  @BeforeClass
   public static void setup_before_everything() {
     Spark.port(0);
     Logger.getLogger("").setLevel(Level.WARNING);

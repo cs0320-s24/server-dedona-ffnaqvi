@@ -1,21 +1,23 @@
- package edu.brown.cs.student.CensusAPITests;
+package edu.brown.cs.student.CensusAPITests;
 
- import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
- import edu.brown.cs.student.main.Caching.CachedCensusHandler;
- import edu.brown.cs.student.main.Census.CensusHandler;
- import java.io.IOException;
- import java.net.HttpURLConnection;
- import java.net.URL;
- import java.util.logging.Level;
- import java.util.logging.Logger;
- import org.junit.jupiter.api.AfterEach;
- import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
- import org.testng.annotations.BeforeClass;
- import spark.Spark;
- public class TestCensusHandler {
-     private CachedCensusHandler datasource;
+import edu.brown.cs.student.main.Caching.CachedCensusHandler;
+import edu.brown.cs.student.main.Census.CensusHandler;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.testng.annotations.BeforeClass;
+import spark.Spark;
+
+public class TestCensusHandler {
+  private CachedCensusHandler datasource;
+
   @BeforeClass
   public static void setup_before_everything() {
     // Set the Spark port number.
@@ -27,8 +29,9 @@
 
   @BeforeEach
   public void setup() {
+      this.datasource = new CachedCensusHandler(3, 1);
     // Re-initialize state, etc. for _every_ test method run
-    Spark.get("census", new CensusHandler(this.datasource));
+    Spark.get("broadband", new CensusHandler(this.datasource));
 
     Spark.init();
     Spark.awaitInitialization(); // don't continue until the server is listening
@@ -37,7 +40,7 @@
   @AfterEach
   public void teardown() {
     // Gracefully stop Spark listening on both endpoints after each test
-    Spark.unmap("census");
+    Spark.unmap("broadband");
     Spark.awaitStop(); // don't proceed until the server is stopped
   }
 
@@ -63,7 +66,7 @@
 
   @Test
   public void testNoState() throws IOException {
-    HttpURLConnection clientConnection = tryRequest("census");
+    HttpURLConnection clientConnection = tryRequest("broadband");
     // Get an OK response (the *connection* worked, the *API* provides an error response)
     assertEquals(404, clientConnection.getResponseCode());
 
@@ -73,14 +76,20 @@
   }
 
   @Test
+  public void testWrongState() throws IOException {
+    HttpURLConnection clientConnection = tryRequest("broadband?state=hello");
+    // Get an OK response (the *connection* worked, the *API* provides an error response)
+    assertEquals(404, clientConnection.getResponseCode());
+    clientConnection.disconnect();
+  }
+
+  @Test
   // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
   // checker
   public void testAPIJustState() throws IOException {
-    HttpURLConnection clientConnection = tryRequest("census?state=California");
+    HttpURLConnection clientConnection = tryRequest("broadband?state=California");
     // Get an OK response (the *connection* worked, the *API* provides an error response)
     assertEquals(200, clientConnection.getResponseCode());
-
-    // check response?
 
     clientConnection.disconnect();
   }
@@ -90,12 +99,10 @@
   // checker
   public void testAPIStateAndCounty() throws IOException {
     HttpURLConnection clientConnection =
-        tryRequest("census?state=California&county=Colusa%20County");
-    // Get an OK response (the *connection* worked, the *API* provides an error response)
-    assertEquals(200, clientConnection.getResponseCode());
+        tryRequest("broadband?state=California&county=Kings%20County");
 
-    // check response?
+    assertEquals(200, clientConnection.getResponseCode());
 
     clientConnection.disconnect();
   }
- }
+}
