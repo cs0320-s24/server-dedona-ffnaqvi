@@ -47,13 +47,16 @@ public class CachedCensusHandler implements ACSDatasource {
             .build(
                 new CacheLoader<>() {
                   @Override
-                  public Object load(String key) throws Exception {
+                  public String load(String key) throws Exception {
                     cacheKey = key;
                     System.out.println(key);
+                    String[] codes = key.split(",");
+                    String stateCode = codes[0];
+                    String countyCode = codes[1];
                     // If the data is not found in the cache, fetch it using the wrapped
                     // CensusHandler
                     //returns String of body of request
-                    return datasource.sendRequest(); // Pass request and response to the handle method
+                    return original.sendRequest(stateCode, countyCode); // Pass request and response to the handle method
                   }
                 });
   }
@@ -61,6 +64,7 @@ public class CachedCensusHandler implements ACSDatasource {
   @Override
   public String sendRequest(String stateCode, String countyCode) {
     // "get" is designed for concurrent situations; for today, use getUnchecked:
+
     String result = cache.getUnchecked(this.cacheKey);
     // For debugging and demo (would remove in a "real" version):
     System.out.println(cache.stats());

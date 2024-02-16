@@ -39,7 +39,7 @@ public class Server {
     CachedCensusHandler caching = new CachedCensusHandler(datasource, 3, 1);
 
     // Setting up the handler for the GET /census endpoints
-    Spark.get("broadband", new CensusHandler(datasource));
+    Spark.get("broadband", new CensusHandler(caching));
 
     // Setting up the handler for the CSV endpoints
     Spark.get("loadcvs", new LoadCSVHandler());

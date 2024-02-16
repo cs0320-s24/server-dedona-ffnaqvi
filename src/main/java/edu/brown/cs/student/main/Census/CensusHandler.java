@@ -68,7 +68,8 @@ public class CensusHandler implements Route {
         throw new NullPointerException("No state param entered");
       }
       // Sends a request to the API and receives JSON back
-      String censusJson = this.sendRequest(stateCode, countyCode);
+      String censusJson = this.datasource.sendRequest(stateCode, countyCode);
+//      String censusJson = this.sendRequest(stateCode, countyCode);
       // Deserializes JSON into an Activity
       List<Census> census = CensusAPIUtilities.deserializeCensus(censusJson);
       LocalDateTime currentDateTime = LocalDateTime.now();

@@ -6,5 +6,4 @@ public interface ACSDatasource {
 
     //should be implemented in fake classes as well to check that server is implemeneted correctly
     public String sendRequest(String stateCode, String countyCode);
-
 }
