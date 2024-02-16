@@ -36,9 +36,11 @@ public class LoadCSVHandler implements Route {
 
     CreatorFromRow<List<String>> creator = new ListStringCreator();
 
-    try {
-      Reader reader = new BufferedReader(new FileReader("datasource/" + fileName));
 
+    Reader reader = null;
+
+    try {
+      reader = new BufferedReader(new FileReader("datasource/" + fileName));
       Server.fileName = fileName;
       Server.parser = new CSVParser<>(reader, creator);
       Server.parser.parse();
