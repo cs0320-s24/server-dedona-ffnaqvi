@@ -43,9 +43,9 @@ public class Server {
     Spark.get("broadband", new CensusHandler(caching));
 
     // Setting up the handler for the CSV endpoints
-    Spark.get("loadcvs", new LoadCSVHandler());
-    Spark.get("viewcvs", new ViewCSVHandler());
-    Spark.get("searchcvs", new SearchCSVHandler());
+    Spark.get("loadcsv", new LoadCSVHandler());
+    Spark.get("viewcsv", new ViewCSVHandler());
+    Spark.get("searchcsv", new SearchCSVHandler());
 
     Spark.init();
     Spark.awaitInitialization();

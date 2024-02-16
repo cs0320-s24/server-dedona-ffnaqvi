@@ -69,7 +69,7 @@ public final class Main {
         // program should print an appropriate error message via System.err.println rather than
         // crashing with an exception. After printing the error message, the program should
         // terminate."
-        reader = new BufferedReader(new FileReader("data/" + filePath));
+        reader = new BufferedReader(new FileReader("datasource/" + filePath));
 
         while (!input.equals("y")) {
           System.out.println(
