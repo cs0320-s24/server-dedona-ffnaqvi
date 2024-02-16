@@ -4,37 +4,35 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import edu.brown.cs.student.main.Caching.ACSDatasource;
-import edu.brown.cs.student.main.Caching.CachedCensusHandler;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /** Class to serve as a proxy server between the user and the ACS API */
-public class CensusHandler implements Route /*, ACSDatasource*/ {
+public class CensusHandler implements Route, ACSDatasource {
 
   private String apiKey = "c4dae4f067d4a604595239338bf6e62c93bcdc34";
   private Map<String, String> stateCodes;
   public String stateCode;
   public String countyCode;
-  public CachedCensusHandler datasource;
+  public ACSDatasource datasource;
 
-  public CensusHandler(CachedCensusHandler cachedCensusHandler) {
+  public CensusHandler(ACSDatasource cachedCensusHandler) {
     // Initialize the stateCodes map when the handler is created
     this.stateCodes = getStateCodes();
-//    pDatasource = this;
     this.datasource = cachedCensusHandler;
-    this.datasource.setCensusHandler(this);
+    this.datasource.setDatasource(this);
   }
 
   /**
@@ -70,7 +68,7 @@ public class CensusHandler implements Route /*, ACSDatasource*/ {
       }
       // Sends a request to the API and receives JSON back
       String censusJson = this.datasource.sendRequest(stateCode, countyCode);
-//      String censusJson = this.sendRequest(stateCode, countyCode);
+      //      String censusJson = this.sendRequest(stateCode, countyCode);
       // Deserializes JSON into an Activity
       List<Census> census = CensusAPIUtilities.deserializeCensus(censusJson);
       LocalDateTime currentDateTime = LocalDateTime.now();
@@ -91,7 +89,7 @@ public class CensusHandler implements Route /*, ACSDatasource*/ {
       // falls short.
       responseMap.put("result", "Exception");
       // TODO: find where this error statement should go
-      if (this.stateCodes.get(state).equals(null)){
+      if (this.stateCodes.get(state).equals(null)) {
         responseMap.put("error", "invalid state name");
       }
     }
@@ -108,7 +106,7 @@ public class CensusHandler implements Route /*, ACSDatasource*/ {
    * @throws IOException
    * @throws InterruptedException
    */
-//  @Override
+  //  @Override
   public String sendRequest(String stateCode, String countyCode)
       throws URISyntaxException, IOException, InterruptedException {
 
@@ -132,6 +130,12 @@ public class CensusHandler implements Route /*, ACSDatasource*/ {
             .send(buildCensusApiRequest, HttpResponse.BodyHandlers.ofString());
 
     return sentCensusApiResponse.body();
+  }
+
+  // TODO: FIX THIS BAD DESIGN
+  @Override
+  public void setDatasource(ACSDatasource datasource) {
+    // nothing needed here
   }
 
   /**

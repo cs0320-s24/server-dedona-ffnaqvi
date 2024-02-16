@@ -1,33 +1,30 @@
- package edu.brown.cs.student.CSVHandlerTests;
+package edu.brown.cs.student.CSVHandlerTests;
 
- import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
- import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
- import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
- import edu.brown.cs.student.main.server.Server;
- import java.io.IOException;
- import java.net.HttpURLConnection;
- import java.net.URL;
- import java.util.logging.Level;
- import java.util.logging.Logger;
- import org.junit.jupiter.api.AfterEach;
- import org.junit.jupiter.api.BeforeAll;
- import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
- import spark.Spark;
+import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
+import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
+import edu.brown.cs.student.main.server.Server;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import spark.Spark;
 
- public class ViewCSVParserTests {
+public class ViewCSVParserTests {
 
-  @BeforeAll
-  public static void setup_before_everything() {
-    // Set the Spark port number. This can only be done once, and has to
-    // Setting port 0 will cause Spark to use an arbitrary available port.
-    Spark.port(0);
-
-    // Changing the JDK *ROOT* logger's level (not global) will block messages
-    //   (assuming using JDK, not Log4J)
-    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
-  }
+  //  @BeforeAll
+  //  public static void setup_before_everything() {
+  //    // Set the Spark port number. This can only be done once, and has to
+  //    // Setting port 0 will cause Spark to use an arbitrary available port.
+  //    Spark.port(0);
+  //
+  //    // Changing the JDK *ROOT* logger's level (not global) will block messages
+  //    //   (assuming using JDK, not Log4J)
+  //    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+  //  }
 
   /**
    * Shared state for all tests. We need to be able to mutate it (adding recipes etc.) but never
@@ -94,4 +91,4 @@
 
     clientConnection.disconnect();
   }
- }
+}

@@ -35,7 +35,7 @@ public class LoadCSVHandler implements Route {
     String fileName = request.queryParams("fileName");
 
     CreatorFromRow<List<String>> creator = new ListStringCreator();
-    Reader reader = new BufferedReader(new FileReader("datasource/"+fileName));
+    Reader reader = new BufferedReader(new FileReader("datasource/" + fileName));
 
     try {
       Server.fileName = fileName;
