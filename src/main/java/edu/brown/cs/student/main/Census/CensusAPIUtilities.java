@@ -1,6 +1,7 @@
 package edu.brown.cs.student.main.Census;
 
 import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Class to handle the API utilities specific to */
+/** Class to handle the API utilities specific to Census API calls */
 public class CensusAPIUtilities {
 
   /**
@@ -17,7 +18,7 @@ public class CensusAPIUtilities {
    * @param jsonCensus
    * @return
    */
-  public static List<Census> deserializeCensus(String jsonCensus) {
+  public static List<Census> deserializeCensus(String jsonCensus) throws IOException {
     List<Census> censusList = new ArrayList<>();
     try {
       Moshi moshi = new Moshi.Builder().build();
@@ -46,11 +47,11 @@ public class CensusAPIUtilities {
           }
         }
       }
-
       return censusList;
     } catch (IOException e) {
-      e.printStackTrace();
-      return censusList; // Returns empty list
+      throw e;
+    } catch (JsonDataException e) {
+      throw e;
     }
   }
 }

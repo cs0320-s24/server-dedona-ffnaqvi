@@ -5,31 +5,23 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Proxy class for caching data in which we check if something is already in the cache and send a
+ * request to the ACS API if not
+ */
 public class CachedCensusHandler implements ACSDatasource {
-  // works as a proxy, call methods on it that you would've called on the original thing
 
-  // when you call getBroadband on it, checks getBroadband on this first and
-  // if this doesn't have the item in the class it'll call getBroadband on the
-  // actual censusHandler
-
-  // initialize the datasource that gets pulled
-
-  // a reference to an instance of the CensusHandler class.
   private ACSDatasource wrappedCensusHandler;
-
-  // a generic interface provided by the Guava library that represents a cache that loads its values
-  // on demand.
   private final LoadingCache<String, String> cache;
-
   private String cacheKey;
 
-  public CachedCensusHandler(/*CensusHandler wrappedCensusHandler,*/ int size, int timeMinutes) {
-    //      datasource = this;
-    // give it size, minutes
-    // return og.getBroadband
-    System.out.println("in caching");
-    //    this.original = datasource;
-    //    this.cacheKey = this.generateCacheKey();
+  /**
+   * Constructor to build a cache with the specified size and duration
+   *
+   * @param size
+   * @param timeMinutes
+   */
+  public CachedCensusHandler(int size, int timeMinutes) {
 
     this.cache =
         CacheBuilder.newBuilder()
@@ -37,6 +29,14 @@ public class CachedCensusHandler implements ACSDatasource {
             .expireAfterWrite(timeMinutes, TimeUnit.MINUTES) // Adjust as needed
             .build(
                 new CacheLoader<>() {
+                  /**
+                   * Method to send a request with the given key to the ACS API, called upon failure
+                   * to find information in the cache
+                   *
+                   * @param key
+                   * @return
+                   * @throws Exception
+                   */
                   @Override
                   public String load(String key) throws Exception {
                     cacheKey = key;
@@ -44,16 +44,21 @@ public class CachedCensusHandler implements ACSDatasource {
                     String[] codes = key.split(",");
                     String stateCode = codes[0];
                     String countyCode = codes[1];
-                    // If the data is not found in the cache, fetch it using the wrapped
-                    // CensusHandler
-                    // returns String of body of request
-                    // NEED TO CALL THIS ON THE CENSUSHANDLER
+
                     return wrappedCensusHandler.sendRequest(
                         stateCode, countyCode); // Pass request and response to the handle method
                   }
                 });
   }
 
+  /**
+   * Function to send a request to the cache for the given key, sends a request to the ACS API if
+   * not found in the cache
+   *
+   * @param stateCode
+   * @param countyCode
+   * @return
+   */
   @Override
   public String sendRequest(String stateCode, String countyCode) {
     // "get" is designed for concurrent situations; for today, use getUnchecked:
@@ -65,6 +70,11 @@ public class CachedCensusHandler implements ACSDatasource {
     return result;
   }
 
+  /**
+   * Function to set the datasource to the passed in datasource
+   *
+   * @param datasource
+   */
   @Override
   public void setDatasource(ACSDatasource datasource) {
     this.wrappedCensusHandler = datasource;

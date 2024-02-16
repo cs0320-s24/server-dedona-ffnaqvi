@@ -21,8 +21,6 @@ public class Server {
   public static int loadStatus;
   public static CSVParser<List<String>> parser;
   public static String fileName;
-  //  public static ACSDatasource datasource;
-  public static CensusHandler datasource;
 
   public static void main(String[] args) throws IOException {
 
@@ -35,8 +33,8 @@ public class Server {
           response.header("Access-Control-Allow-Origin", "*");
           response.header("Access-Control-Allow-Methods", "*");
         });
-    // class that implemenets ACS datasource = new object (datasource, size, tiem)
-    CachedCensusHandler caching = new CachedCensusHandler(/*datasource,*/ 3, 1);
+
+    CachedCensusHandler caching = new CachedCensusHandler(3, 1);
 
     // Setting up the handler for the GET /census endpoints
     Spark.get("broadband", new CensusHandler(caching));
@@ -57,6 +55,9 @@ public class Server {
             + "go to the /searchCSV path, followed by the parameters for searching \n(searchValue, "
             + "columnIdentifier or columnNumber, and a boolean for \nwhether or not the data"
             + "contains headers). To connect to the US Census API, go to the path /census.\n"
-            + "inputting no county will result in a search for all counties in the specified state.");
+            + "inputting no county will result in a search for all counties in the specified state.\n" +
+                "Data entries from the ACS API is cached automatically for 1 minute. To change the duration,\n" +
+                "edit the Server class to fit your desired criteria. To remove caching entirely, set the time \n" +
+                "duration to 0 minutes.");
   }
 }
