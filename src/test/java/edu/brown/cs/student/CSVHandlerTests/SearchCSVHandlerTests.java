@@ -1,34 +1,31 @@
- package edu.brown.cs.student.CSVHandlerTests;
+package edu.brown.cs.student.CSVHandlerTests;
 
- import com.squareup.moshi.Moshi;
- import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
- import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
- import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
- import java.io.IOException;
- import java.net.HttpURLConnection;
- import java.net.URL;
- import java.util.logging.Level;
- import java.util.logging.Logger;
- import okio.Buffer;
- import org.junit.jupiter.api.AfterEach;
- import org.junit.jupiter.api.BeforeAll;
- import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
- import org.testng.Assert;
- import spark.Spark;
+import com.squareup.moshi.Moshi;
+import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
+import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
+import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import okio.Buffer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.testng.Assert;
+import spark.Spark;
 
- public class SearchCSVHandlerTests {
+public class SearchCSVHandlerTests {
 
-  @BeforeAll
-  public static void setup_before_everything() {
-    // Set the Spark port number. This can only be done once, and has to
-    // Setting port 0 will cause Spark to use an arbitrary available port.
-    Spark.port(0);
-
-    // Changing the JDK *ROOT* logger's level (not global) will block messages
-    //   (assuming using JDK, not Log4J)
-    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
-  }
+  //  @BeforeAll
+  //  public static void setup_before_everything() {
+  //    // Set the Spark port number. This can only be done once, and has to
+  //    // Setting port 0 will cause Spark to use an arbitrary available port.
+  //    Spark.port(0);
+  //
+  //    // Changing the JDK *ROOT* logger's level (not global) will block messages
+  //    //   (assuming using JDK, not Log4J)
+  //    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+  //  }
 
   @BeforeEach
   public void setup() {
@@ -93,4 +90,4 @@
 
     clientConnection.disconnect();
   }
- }
+}

@@ -1,22 +1,22 @@
- package edu.brown.cs.student.CSVHandlerTests;
+package edu.brown.cs.student.CSVHandlerTests;
 
- import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
- import com.squareup.moshi.Moshi;
- import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
- import java.io.IOException;
- import java.net.HttpURLConnection;
- import java.net.URL;
- import java.util.logging.Level;
- import java.util.logging.Logger;
- import okio.Buffer;
- import org.junit.jupiter.api.AfterEach;
- import org.junit.jupiter.api.BeforeAll;
- import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
- import spark.Spark;
+import com.squareup.moshi.Moshi;
+import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import okio.Buffer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import spark.Spark;
 
- public class LoadCSVHandlerTests {
+public class LoadCSVHandlerTests {
 
   @BeforeAll
   public static void setup_before_everything() {
@@ -96,4 +96,4 @@
 
     clientConnection.disconnect();
   }
- }
+}

@@ -6,7 +6,6 @@ import edu.brown.cs.student.main.CSVParser.CSVParser;
 import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
 import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
 import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
-import edu.brown.cs.student.main.Caching.ACSDatasource;
 import edu.brown.cs.student.main.Caching.CachedCensusHandler;
 import edu.brown.cs.student.main.Census.*;
 import java.io.IOException;
@@ -22,12 +21,12 @@ public class Server {
   public static int loadStatus;
   public static CSVParser<List<String>> parser;
   public static String fileName;
-//  public static ACSDatasource datasource;
+  //  public static ACSDatasource datasource;
   public static CensusHandler datasource;
 
   public static void main(String[] args) throws IOException {
 
-    int port = 3231;
+    int port = 3232;
 
     Spark.port(port);
 
@@ -36,16 +35,16 @@ public class Server {
           response.header("Access-Control-Allow-Origin", "*");
           response.header("Access-Control-Allow-Methods", "*");
         });
-    //class that implemenets ACS datasource = new object (datasource, size, tiem)
+    // class that implemenets ACS datasource = new object (datasource, size, tiem)
     CachedCensusHandler caching = new CachedCensusHandler(/*datasource,*/ 3, 1);
 
     // Setting up the handler for the GET /census endpoints
     Spark.get("broadband", new CensusHandler(caching));
 
     // Setting up the handler for the CSV endpoints
-    Spark.get("loadcvs", new LoadCSVHandler());
-    Spark.get("viewcvs", new ViewCSVHandler());
-    Spark.get("searchcvs", new SearchCSVHandler());
+    Spark.get("loadcsv", new LoadCSVHandler());
+    Spark.get("viewcsv", new ViewCSVHandler());
+    Spark.get("searchcsv", new SearchCSVHandler());
 
     Spark.init();
     Spark.awaitInitialization();

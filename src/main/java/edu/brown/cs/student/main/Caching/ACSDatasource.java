@@ -5,8 +5,11 @@ import java.net.URISyntaxException;
 
 public interface ACSDatasource {
 
-    //implements methods to getBroadabnd, which will actually send requests to the Census API
+  // implements methods to getBroadabnd, which will actually send requests to the Census API
 
-    //should be implemented in fake classes as well to check that server is implemeneted correctly
-    public String sendRequest(String stateCode, String countyCode) throws URISyntaxException, IOException, InterruptedException;
+  // should be implemented in fake classes as well to check that server is implemeneted correctly
+  public String sendRequest(String stateCode, String countyCode)
+      throws URISyntaxException, IOException, InterruptedException;
+
+  void setDatasource(ACSDatasource datasource);
 }
