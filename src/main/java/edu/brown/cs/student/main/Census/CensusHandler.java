@@ -92,7 +92,7 @@ public class CensusHandler implements Route, ACSDatasource {
     catch (Exception e) {
       response.status(404);
 
-      responseMap.put("result", "Exception: " + e.getLocalizedMessage());
+      responseMap.put("result", "Exception: " + e);
 
     }
     return responseMap;
