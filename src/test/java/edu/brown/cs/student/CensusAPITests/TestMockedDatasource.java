@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,15 +33,27 @@ public class TestMockedDatasource {
   public static void setupOnce() {
     // Pick an arbitrary free port
     Spark.port(0);
-    // Eliminate logger spam in console for test suite
+    // Eliminate logger spam in the console for the test suite
     Logger.getLogger("").setLevel(Level.WARNING); // empty name = root
+    // Start the Spark server
+    Spark.init();
+    Spark.awaitInitialization(); // wait until the server is listening
   }
 
+  @AfterAll
+  public static void teardownOnce() {
+    // Stop the Spark server after all tests are done
+    Spark.stop();
+  }
+
+  /**
+   * Mocked test to make sure that calling the census API works as intended
+   * Also check to make sure that data is saved into a cache
+   */
   @Test
-  public void testMock() {
+  public void testMockSimple() {
     CachedCensusHandler cacheForMock = new CachedCensusHandler(3, 2);
     CensusHandler censusHandlerForMock = new CensusHandler(cacheForMock);
-//    Map<String, Object> mockmap = new HashMap<>();
     Map<String, Object> responseMap = new HashMap<>();
 
     Census censusForMock = new Census();
@@ -57,15 +70,19 @@ public class TestMockedDatasource {
     responseMap.put("County", county);
     responseMap.put("Broadband Result", censusForMock);
 
-    MockedAPIDatasource mockCall = new MockedAPIDatasource(responseMap);
+    MockedAPIDatasource mockCall = new MockedAPIDatasource(responseMap, cacheForMock.cache);
 
     Map<String, Object> resultMap = mockCall.mockAPICall("Alabama", "Lauderdale County");
 
 
+    Assert.assertEquals(resultMap.get("result").toString(),"success");
+    Assert.assertEquals(resultMap.get("Current Date and Time").toString(),"current date and time");
+    Assert.assertEquals(resultMap.get("State").toString(),state);
+    Assert.assertEquals(resultMap.get("County").toString(),county);
     Assert.assertEquals(resultMap.get("Broadband Result").toString(),"[Lauderdale County, Alabama has the estimated percent broadband internet subscription of: 77.8%]\n");
-
-
+    Assert.assertEquals(cacheForMock.cache.size(), 1);
   }
+
 
 
 }
