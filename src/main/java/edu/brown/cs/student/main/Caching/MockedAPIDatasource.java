@@ -19,6 +19,13 @@ public class MockedAPIDatasource implements ACSDatasource {
   private Map<String, Object> constantMap;
   private LoadingCache<String, String> cache;
 
+  /**
+   * Constructor for MockedAPIDatasource
+   * This initializes the constantMap used as well as the cache to be used within the mocked data
+   *
+   * @param map
+   * @param cache
+   */
   public MockedAPIDatasource(Map<String, Object> map, LoadingCache<String, String> cache) {
     this.constantMap = map;
     this.cache = cache;
@@ -37,7 +44,13 @@ public class MockedAPIDatasource implements ACSDatasource {
     }
   }
 
-
+  /**
+   * Mocks an API call with caching.
+   *
+   * @param state
+   * @param county
+   * @return
+   */
   public  Map<String, Object> mockAPICall(String state, String county){
     String cacheKey = state + ":" + county;
 
@@ -53,11 +66,26 @@ public class MockedAPIDatasource implements ACSDatasource {
     return this.constantMap;
   }
 
+  /**
+   * Sends an API request based on state and county codes.
+   *
+   * @param stateCode
+   * @param countyCode
+   * @return
+   * @throws URISyntaxException
+   * @throws IOException
+   * @throws InterruptedException
+   */
   @Override
   public String sendRequest(String stateCode, String countyCode) throws URISyntaxException, IOException, InterruptedException {
     return this.constantMap.toString();
   }
 
+  /**
+   * Sets the datasource for the ACS Datasource.
+   *
+   * @param datasource The datasource to set.
+   */
   @Override
   public void setDatasource(ACSDatasource datasource) {
     this.constantData = datasource;
