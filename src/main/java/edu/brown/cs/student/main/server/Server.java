@@ -55,6 +55,9 @@ public class Server {
             + "go to the /searchCSV path, followed by the parameters for searching \n(searchValue, "
             + "columnIdentifier or columnNumber, and a boolean for \nwhether or not the data"
             + "contains headers). To connect to the US Census API, go to the path /census.\n"
-            + "inputting no county will result in a search for all counties in the specified state.");
+            + "inputting no county will result in a search for all counties in the specified state.\n" +
+                "Data entries from the ACS API is cached automatically for 1 minute. To change the duration,\n" +
+                "edit the Server class to fit your desired criteria. To remove caching entirely, set the time \n" +
+                "duration to 0 minutes.");
   }
 }

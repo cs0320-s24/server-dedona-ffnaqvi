@@ -48,7 +48,8 @@ public class CensusHandler implements Route, ACSDatasource {
    * @param response The response object providing functionality for modifying the response
    */
   @Override
-  public Object handle(Request request, Response response) throws IOException, URISyntaxException, InterruptedException {
+  public Object handle(Request request, Response response)
+      throws IOException, URISyntaxException, InterruptedException {
 
     // Creates a hashmap to store the results of the request
 
@@ -203,7 +204,8 @@ public class CensusHandler implements Route, ACSDatasource {
    * @return a String of the countyCode
    * @throws IOException
    */
-  private String getCountyCodes(String stateCode, String targetCounty) throws IOException, URISyntaxException, InterruptedException {
+  private String getCountyCodes(String stateCode, String targetCounty)
+      throws IOException, URISyntaxException, InterruptedException {
     try {
       // Send a request to the API to get county names and codes for a specific state
       HttpRequest request =
@@ -248,8 +250,7 @@ public class CensusHandler implements Route, ACSDatasource {
           }
         }
       }
-    }
-    catch (IOException | InterruptedException | URISyntaxException e) {
+    } catch (IOException | InterruptedException | URISyntaxException e) {
       throw e;
     }
 
