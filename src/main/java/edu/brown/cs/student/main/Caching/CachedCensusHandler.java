@@ -3,7 +3,6 @@ package edu.brown.cs.student.main.Caching;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,7 +65,6 @@ public class CachedCensusHandler implements ACSDatasource {
 
     String result = this.cache.getUnchecked(this.cacheKey);
     // For debugging and demo (would remove in a "real" version):
-    System.out.println(this.cache.stats());
 
     return result;
   }

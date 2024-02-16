@@ -8,15 +8,15 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import spark.Spark;
 
 /** This test class uses mocking to test a variety of API interactions */
 public class TestMockedDatasource {
 
-  @BeforeAll
+  @BeforeClass
   public static void setupOnce() {
     // Pick an arbitrary free port
     Spark.port(0);
