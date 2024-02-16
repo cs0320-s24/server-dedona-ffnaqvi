@@ -110,7 +110,7 @@ public class CensusHandler implements Route, ACSDatasource {
   }
 
   /**
-   * Method to send a requets to the ACS API
+   * Method to send a requests to the ACS API
    *
    * @param stateCode
    * @param countyCode

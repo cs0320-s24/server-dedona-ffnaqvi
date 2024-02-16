@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import spark.Spark;
 
+/** This testing class tests the functionality of the viewcsv endpoint */
 public class ViewCSVParserTests {
   @BeforeEach
   public void setup() {
@@ -28,6 +29,13 @@ public class ViewCSVParserTests {
     Spark.awaitStop();
   }
 
+  /**
+   * Helper method to tey the request
+   *
+   * @param apiCall
+   * @return
+   * @throws IOException
+   */
   private static HttpURLConnection tryRequest(String apiCall) throws IOException {
     URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
@@ -35,17 +43,6 @@ public class ViewCSVParserTests {
     clientConnection.connect();
     return clientConnection;
   }
-
-  //TODO: revisit
-//  @Test
-//  public void testViewBeforeLoad() throws IOException {
-//    HttpURLConnection clientConnection = tryRequest("viewCSV");
-//    int responseCode = clientConnection.getResponseCode();
-//
-//    // Ensure that the response code is 404 (Not Found)
-//    assertEquals(404, responseCode);
-//  }
-
 
   /**
    * Test to see if viewing a CSV file results in a loadStatus of 200 (is valid)
@@ -63,4 +60,16 @@ public class ViewCSVParserTests {
     clientConnection.disconnect();
   }
 
+  /**
+   * Test to see if viewing a CSV file results before loaded
+   *
+   * @throws IOException
+   */
+  @Test
+  public void testViewError() throws IOException {
+    HttpURLConnection clientConnection = tryRequest("viewCSV");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    clientConnection.disconnect();
+  }
 }

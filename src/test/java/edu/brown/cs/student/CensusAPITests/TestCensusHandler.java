@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.testng.annotations.BeforeClass;
 import spark.Spark;
 
+/** Class to test the CensusHandler capabilities */
 public class TestCensusHandler {
   private CachedCensusHandler datasource;
 
@@ -29,7 +30,7 @@ public class TestCensusHandler {
 
   @BeforeEach
   public void setup() {
-      this.datasource = new CachedCensusHandler(3, 1);
+    this.datasource = new CachedCensusHandler(3, 1);
     // Re-initialize state, etc. for _every_ test method run
     Spark.get("broadband", new CensusHandler(this.datasource));
 
@@ -47,8 +48,7 @@ public class TestCensusHandler {
   /**
    * Helper to start a connection to a specific API endpoint/params
    *
-   * @param apiCall the call string, including endpoint (NOTE: this would be better if it had more
-   *     structure!)
+   * @param apiCall the call string, including endpoint
    * @return the connection for the given URL, just after connecting
    * @throws IOException if the connection fails for some reason
    */
@@ -64,8 +64,12 @@ public class TestCensusHandler {
     return clientConnection;
   }
 
+  /**
+   * Tests bad request exception through if a state doesn't exist
+   *
+   * @throws IOException
+   */
   @Test
-  // tests when a state doesn't exist (badrequest)
   public void testWrongState() throws IOException {
     HttpURLConnection clientConnection = tryRequest("broadband?state=hello");
     // Get an OK response (the *connection* worked, the *API* provides an error response)
@@ -74,9 +78,12 @@ public class TestCensusHandler {
     clientConnection.disconnect();
   }
 
+  /**
+   * Tests success call with state
+   *
+   * @throws IOException
+   */
   @Test
-  // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
-  // checker
   public void testAPIJustState() throws IOException {
     HttpURLConnection clientConnection = tryRequest("broadband?state=California");
     // Get an OK response (the *connection* worked, the *API* provides an error response)
@@ -85,9 +92,12 @@ public class TestCensusHandler {
     clientConnection.disconnect();
   }
 
+  /**
+   * Tests success call with state and county
+   *
+   * @throws IOException
+   */
   @Test
-  // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
-  // checker
   public void testAPIStateAndCounty() throws IOException {
     HttpURLConnection clientConnection =
         tryRequest("broadband?state=California&county=Kings%20County");
@@ -97,33 +107,43 @@ public class TestCensusHandler {
     clientConnection.disconnect();
   }
 
+  /**
+   * Tests error status when a json is not will formed (bad json)
+   *
+   * @throws IOException
+   */
   @Test
-  // Check for when a json is not well formed (bad json)
   public void testBadJsonError() throws IOException {
     HttpURLConnection clientConnection =
-            tryRequest("broadband?STATE=California&COUNTY=Kings County");
+        tryRequest("broadband?STATE=California&COUNTY=Kings County");
 
     assertEquals(400, clientConnection.getResponseCode());
 
     clientConnection.disconnect();
   }
 
+  /**
+   * Tests error status for when a field is missing (bad request)
+   *
+   * @throws IOException
+   */
   @Test
-  // Check for when a field is missing (bad request)
   public void testBadRequestError() throws IOException {
-    HttpURLConnection clientConnection =
-            tryRequest("broadband?state=");
+    HttpURLConnection clientConnection = tryRequest("broadband?state=");
 
     assertEquals(400, clientConnection.getResponseCode());
 
     clientConnection.disconnect();
   }
 
+  /**
+   * Tests error status for when a file doesn't exist (datasource error)
+   *
+   * @throws IOException
+   */
   @Test
-  // Tests when a file doesn't exist (datasource error)
   public void testDatasourceError() throws IOException {
-    HttpURLConnection clientConnection =
-            tryRequest("broadband");
+    HttpURLConnection clientConnection = tryRequest("broadband");
 
     assertEquals(404, clientConnection.getResponseCode());
 

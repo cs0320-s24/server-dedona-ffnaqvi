@@ -1,32 +1,19 @@
 package edu.brown.cs.student.CensusAPITests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Types;
-import edu.brown.cs.student.main.Caching.ACSDatasource;
 import edu.brown.cs.student.main.Caching.CachedCensusHandler;
 import edu.brown.cs.student.main.Caching.MockedAPIDatasource;
 import edu.brown.cs.student.main.Census.Census;
-import edu.brown.cs.student.main.Census.CensusHandler;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import okio.Buffer;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
 import spark.Spark;
 
+/** This test class uses mocking to test a variety of API interactions */
 public class TestMockedDatasource {
 
   @BeforeAll
@@ -47,8 +34,8 @@ public class TestMockedDatasource {
   }
 
   /**
-   * Mocked test to make sure that calling the census API works as intended
-   * Also check to make sure that data is saved into a cache
+   * Mocked test to make sure that calling the census API works as intended Also check to make sure
+   * that data is saved into a cache
    */
   @Test
   public void testMockSimple() {
@@ -73,18 +60,19 @@ public class TestMockedDatasource {
 
     Map<String, Object> resultMap = mockCall.mockAPICall("Alabama", "Lauderdale County");
 
-
-    Assert.assertEquals(resultMap.get("result").toString(),"success");
-    Assert.assertEquals(resultMap.get("Current Date and Time").toString(),"current date and time");
-    Assert.assertEquals(resultMap.get("State").toString(),state);
-    Assert.assertEquals(resultMap.get("County").toString(),county);
-    Assert.assertEquals(resultMap.get("Broadband Result").toString(),"[Lauderdale County, Alabama has the estimated percent broadband internet subscription of: 77.8%]\n");
+    Assert.assertEquals(resultMap.get("result").toString(), "success");
+    Assert.assertEquals(resultMap.get("Current Date and Time").toString(), "current date and time");
+    Assert.assertEquals(resultMap.get("State").toString(), state);
+    Assert.assertEquals(resultMap.get("County").toString(), county);
+    Assert.assertEquals(
+        resultMap.get("Broadband Result").toString(),
+        "[Lauderdale County, Alabama has the estimated percent broadband internet subscription of: 77.8%]\n");
     Assert.assertEquals(cacheForMock.cache.size(), 1);
   }
 
   /**
-   * Mocked test to make sure that calling the census API works as intended
-   * Also check to make sure that data is saved into a cache
+   * Mocked test to make sure that calling the census API works as intended Also check to make sure
+   * that data is saved into a cache
    */
   @Test
   public void testMockCache() {
@@ -109,12 +97,13 @@ public class TestMockedDatasource {
 
     Map<String, Object> resultMap = mockCall.mockAPICall("Alabama", "Lauderdale County");
 
-
-    Assert.assertEquals(resultMap.get("result").toString(),"success");
-    Assert.assertEquals(resultMap.get("Current Date and Time").toString(),"current date and time");
-    Assert.assertEquals(resultMap.get("State").toString(),state);
-    Assert.assertEquals(resultMap.get("County").toString(),county);
-    Assert.assertEquals(resultMap.get("Broadband Result").toString(),"[Lauderdale County, Alabama has the estimated percent broadband internet subscription of: 77.8%]\n");
+    Assert.assertEquals(resultMap.get("result").toString(), "success");
+    Assert.assertEquals(resultMap.get("Current Date and Time").toString(), "current date and time");
+    Assert.assertEquals(resultMap.get("State").toString(), state);
+    Assert.assertEquals(resultMap.get("County").toString(), county);
+    Assert.assertEquals(
+        resultMap.get("Broadband Result").toString(),
+        "[Lauderdale County, Alabama has the estimated percent broadband internet subscription of: 77.8%]\n");
     Assert.assertEquals(cacheForMock.cache.size(), 1);
 
     mockCall.mockAPICall("Alabama", "Lauderdale County");
@@ -131,7 +120,5 @@ public class TestMockedDatasource {
     mockCall.mockAPICall("New State 4", "New County 4");
     // Should stay at size 3 as we have defined this parameter above
     Assert.assertEquals(cacheForMock.cache.size(), 3);
-
   }
-
 }

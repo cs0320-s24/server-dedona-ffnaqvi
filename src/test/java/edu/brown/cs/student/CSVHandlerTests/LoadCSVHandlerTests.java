@@ -20,7 +20,7 @@ public class LoadCSVHandlerTests {
 
   private static final String API_ENDPOINT = "loadCSV";
   private static final int SUCCESS_RESPONSE_CODE = 200;
-  
+
   @BeforeClass
   public static void setup_before_everything() {
     Spark.port(0);
@@ -55,9 +55,9 @@ public class LoadCSVHandlerTests {
    */
   @Test
   public void testAPIReadCSV() throws IOException {
-    //______________________________________________
+    // ______________________________________________
     // testing one file
-    //______________________________________________
+    // ______________________________________________
     String fileName1 = "ri_city_income.csv";
     HttpURLConnection clientConnection1 = tryRequest(API_ENDPOINT + "?fileName=" + fileName1);
     assertEquals(SUCCESS_RESPONSE_CODE, clientConnection1.getResponseCode());
@@ -72,9 +72,9 @@ public class LoadCSVHandlerTests {
 
     clientConnection1.disconnect();
 
-    //______________________________________________
+    // ______________________________________________
     // testing another file
-    //______________________________________________
+    // ______________________________________________
     String fileName2 = "ri_city_income.csv";
     HttpURLConnection clientConnection2 = tryRequest(API_ENDPOINT + "?fileName=" + fileName2);
     assertEquals(SUCCESS_RESPONSE_CODE, clientConnection2.getResponseCode());
@@ -90,9 +90,9 @@ public class LoadCSVHandlerTests {
 
     clientConnection2.disconnect();
 
-    //______________________________________________
+    // ______________________________________________
     // yet another file...
-    //______________________________________________
+    // ______________________________________________
     String fileName3 = "ri_city_income.csv";
     HttpURLConnection clientConnection3 = tryRequest(API_ENDPOINT + "?fileName=" + fileName3);
     assertEquals(SUCCESS_RESPONSE_CODE, clientConnection3.getResponseCode());
@@ -153,5 +153,4 @@ public class LoadCSVHandlerTests {
 
     clientConnection.disconnect();
   }
-
 }

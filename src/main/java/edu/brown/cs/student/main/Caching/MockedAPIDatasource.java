@@ -3,25 +3,21 @@ package edu.brown.cs.student.main.Caching;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import edu.brown.cs.student.main.Census.Census;
-import edu.brown.cs.student.main.Census.CensusHandler;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /** Class that mocks the ACS Datasource */
 public class MockedAPIDatasource implements ACSDatasource {
 
-  private ACSDatasource constantData; //the census handler
+  private ACSDatasource constantData; // the census handler
   private Map<String, Object> constantMap;
   private LoadingCache<String, String> cache;
 
   /**
-   * Constructor for MockedAPIDatasource
-   * This initializes the constantMap used as well as the cache to be used within the mocked data
+   * Constructor for MockedAPIDatasource This initializes the constantMap used as well as the cache
+   * to be used within the mocked data
    *
    * @param map
    * @param cache
@@ -31,16 +27,18 @@ public class MockedAPIDatasource implements ACSDatasource {
     this.cache = cache;
     // Configure the cache for maximum size and expiration time
     if (cache == null) {
-      this.cache = CacheBuilder.newBuilder()
-          .maximumSize(3)
-          .expireAfterWrite(1, TimeUnit.MINUTES)
-          .build(new CacheLoader<String, String>() {
-            @Override
-            public String load(String key) throws Exception {
-              // Implement the loading logic here (optional)
-              return null;
-            }
-          });
+      this.cache =
+          CacheBuilder.newBuilder()
+              .maximumSize(3)
+              .expireAfterWrite(1, TimeUnit.MINUTES)
+              .build(
+                  new CacheLoader<String, String>() {
+                    @Override
+                    public String load(String key) throws Exception {
+                      // Implement the loading logic here (optional)
+                      return null;
+                    }
+                  });
     }
   }
 
@@ -51,7 +49,7 @@ public class MockedAPIDatasource implements ACSDatasource {
    * @param county
    * @return
    */
-  public  Map<String, Object> mockAPICall(String state, String county){
+  public Map<String, Object> mockAPICall(String state, String county) {
     String cacheKey = state + ":" + county;
 
     // Check if data is already present in the cache
@@ -77,7 +75,8 @@ public class MockedAPIDatasource implements ACSDatasource {
    * @throws InterruptedException
    */
   @Override
-  public String sendRequest(String stateCode, String countyCode) throws URISyntaxException, IOException, InterruptedException {
+  public String sendRequest(String stateCode, String countyCode)
+      throws URISyntaxException, IOException, InterruptedException {
     return this.constantMap.toString();
   }
 
@@ -91,5 +90,3 @@ public class MockedAPIDatasource implements ACSDatasource {
     this.constantData = datasource;
   }
 }
-
-

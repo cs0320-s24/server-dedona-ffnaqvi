@@ -24,7 +24,7 @@ public class Server {
 
   public static void main(String[] args) throws IOException {
 
-    int port = 3231;
+    int port = 3232;
 
     Spark.port(port);
 
@@ -34,6 +34,7 @@ public class Server {
           response.header("Access-Control-Allow-Methods", "*");
         });
 
+    // Sets up caching for the census handler; change params to alter the caching
     CachedCensusHandler caching = new CachedCensusHandler(3, 2);
 
     // Setting up the handler for the GET /census endpoints

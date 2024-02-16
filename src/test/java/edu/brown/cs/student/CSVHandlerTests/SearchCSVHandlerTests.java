@@ -1,19 +1,17 @@
 package edu.brown.cs.student.CSVHandlerTests;
 
-import com.squareup.moshi.Moshi;
 import edu.brown.cs.student.main.CSVParser.LoadCSVHandler;
 import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
-import edu.brown.cs.student.main.CSVParser.ViewCSVHandler;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
 import spark.Spark;
 
+/** This test class tests the functionality of the SearchCSVHandler class */
 public class SearchCSVHandlerTests {
   @BeforeEach
   public void setup() {
@@ -30,6 +28,13 @@ public class SearchCSVHandlerTests {
     Spark.awaitStop();
   }
 
+  /**
+   * Helper method to send requests to the API
+   *
+   * @param apiCall
+   * @return
+   * @throws IOException
+   */
   private static HttpURLConnection tryRequest(String apiCall) throws IOException {
     URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
@@ -38,6 +43,11 @@ public class SearchCSVHandlerTests {
     return clientConnection;
   }
 
+  /**
+   * Tests search with valid parameters
+   *
+   * @throws IOException
+   */
   @Test
   public void testSearchCSVWithValidParameters() throws IOException {
     // Load CSV data
@@ -51,16 +61,16 @@ public class SearchCSVHandlerTests {
     // Ensure that the search operation is successful (response code 200)
     Assert.assertEquals(200, searchResponseCode);
 
-    // If needed, you can also inspect the response body or headers
-    // String responseBody = readResponseBody(searchConnection);
-    // assertNotNull(responseBody);
-
     // Don't forget to disconnect the connections
     loadConnection.disconnect();
     searchConnection.disconnect();
   }
 
-  //TODO: revisit
+  /**
+   * Tests search with invalid parameters
+   *
+   * @throws IOException
+   */
   @Test
   public void testSearchCSVWithInvalidParameters() throws IOException {
     // Load CSV data
@@ -68,15 +78,12 @@ public class SearchCSVHandlerTests {
     Assert.assertEquals(200, loadConnection.getResponseCode());
 
     // Search CSV with invalid parameters
-    HttpURLConnection searchConnection = tryRequest("searchCSV?searchValue=value&columnIndexIdentifier=-1");
+    HttpURLConnection searchConnection =
+        tryRequest("searchCSV?searchValue=value&columnIndexIdentifier=-1");
     int searchResponseCode = searchConnection.getResponseCode();
 
     // Ensure that the search operation fails (response code 404)
     Assert.assertEquals(200, searchResponseCode);
-
-    // If needed, you can also inspect the response body or headers
-    // String responseBody = readResponseBody(searchConnection);
-    // assertNotNull(responseBody);
 
     // Don't forget to disconnect the connections
     loadConnection.disconnect();

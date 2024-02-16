@@ -33,7 +33,6 @@ public class SearchCSVHandler implements Route {
   public Object handle(Request request, Response response) throws Exception {
 
     // Get Query parameters, can be used to make your search more specific
-
     if (Server.loadStatus == 200) {
 
       String searchValue = request.queryParams("searchValue");
@@ -44,28 +43,23 @@ public class SearchCSVHandler implements Route {
       }
 
       boolean hasHeaders = Boolean.parseBoolean(request.queryParams("hasHeaders"));
-      //      if (hasHeaders == true || hasHeaders == false || hasHeaders == null){
-      //      }
-      //      else{
-      //
-      //      }
+
       String columnNameIdentifier = null;
       Integer columnIndexIdentifier = null;
 
       try {
         columnNameIdentifier = request.queryParams("columnNameIdentifier");
       } catch (NullPointerException e) {
-
+        // no error handling needed
       }
 
       try {
         columnIndexIdentifier = Integer.parseInt(request.queryParams("columnIndexIdentifier"));
       } catch (NullPointerException | NumberFormatException e) {
-
+        // no error handling needed
       }
 
       try {
-
         Map.Entry<String, Integer> columnIdentifier =
             new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
         CSVParser<List<String>> parser =
