@@ -1,8 +1,11 @@
-package edu.brown.cs.student.main.Census;
+package edu.brown.cs.student.main.Caching;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import edu.brown.cs.student.main.Census.Census;
+import edu.brown.cs.student.main.Census.CensusAPIUtilities;
+import edu.brown.cs.student.main.Census.CensusHandler;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -13,8 +16,13 @@ import spark.Route;
 
 public class CachedCensusHandler implements Route {
 
+  // a reference to an instance of the CensusHandler class.
   private final CensusHandler wrappedCensusHandler;
+
+  // a generic interface provided by the Guava library that represents a cache that loads its values
+  // on demand.
   private final LoadingCache<String, Object> cache;
+
   private String cacheKey;
 
   public CachedCensusHandler(CensusHandler censusHandler, Request request, Response response) {
@@ -38,6 +46,28 @@ public class CachedCensusHandler implements Route {
                   }
                 });
   }
+
+//  public CachedCensusHandler(CensusHandler censusHandler, Request request, Response response) {
+//    System.out.println("in caching");
+//    this.wrappedCensusHandler = censusHandler;
+//    //    this.cacheKey = this.generateCacheKey();
+//
+//    this.cache =
+//        CacheBuilder.newBuilder()
+//            .maximumSize(100) // Adjust as needed
+//            .expireAfterWrite(1, TimeUnit.HOURS) // Adjust as needed
+//            .build(
+//                new CacheLoader<>() {
+//                  @Override
+//                  public Object load(String key) throws Exception {
+//                    System.out.println(key);
+//                    // If the data is not found in the cache, fetch it using the wrapped
+//                    // CensusHandler
+//                    return wrappedCensusHandler.handle(
+//                        request, response); // Pass request and response to the handle method
+//                  }
+//                });
+//  }
 
   @Override
   public Object handle(Request request, Response response)

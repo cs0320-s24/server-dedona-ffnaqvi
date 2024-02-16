@@ -1,7 +1,6 @@
  package edu.brown.cs.student.CensusAPITests;
-
-import edu.brown.cs.student.main.Census.CachedCensusHandler;
- import edu.brown.cs.student.main.Spark.SparkUtilities;
+ import edu.brown.cs.student.main.Caching.CachedCensusHandler;
+ import edu.brown.cs.student.main.Spark.SparkTestUtilities;
  import java.io.IOException;
  import java.net.URISyntaxException;
  import org.junit.jupiter.api.Test;
@@ -19,23 +18,26 @@ import edu.brown.cs.student.main.Census.CachedCensusHandler;
   @Test
   public void testHandle() throws IOException, URISyntaxException, InterruptedException {
     // Create a mock request
-    Request mockRequest = SparkUtilities.mockRequest();
+    Request mockRequest = SparkTestUtilities.mockRequest();
     // Set query parameters
     String state = mockRequest.queryParams("state");
     String county = mockRequest.queryParams("county");
 
     // Create a mock response
-    Response mockResponse = SparkUtilities.mockResponse();
+    Response mockResponse = SparkTestUtilities.mockResponse();
 
     // Invoke the handle method
     Object result = cachedCensusHandler.handle(mockRequest, mockResponse);
 
     // Assert the result
     Assert.assertNotNull(result);
+
     // Adjust the following assertion based on your implementation
     Assert.assertEquals("Expected result based on your implementation", result.toString());
   }
+
+
  }
 
 
-}
+
