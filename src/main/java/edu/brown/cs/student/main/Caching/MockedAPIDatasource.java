@@ -8,11 +8,7 @@ import java.net.URISyntaxException;
 /** Class that mocks the ACS Datasource */
 public class MockedAPIDatasource implements ACSDatasource {
 
-  private CensusHandler constantData;
-
-  public void MockedAPIDataSource(CensusHandler constantData) {
-    this.constantData = constantData;
-  }
+  private ACSDatasource constantData; //the census handler
 
   @Override
   public String sendRequest(String stateCode, String countyCode) throws URISyntaxException, IOException, InterruptedException {
@@ -21,6 +17,6 @@ public class MockedAPIDatasource implements ACSDatasource {
 
   @Override
   public void setDatasource(ACSDatasource datasource) {
-    //unsure?
+    this.constantData = datasource;
   }
 }

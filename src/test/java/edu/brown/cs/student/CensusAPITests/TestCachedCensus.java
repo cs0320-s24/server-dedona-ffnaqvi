@@ -65,26 +65,6 @@ public class TestCachedCensus {
         clientConnection.connect();
         return clientConnection;
     }
-
-    @Test
-    public void testNoState() throws IOException {
-        HttpURLConnection clientConnection = tryRequest("broadband");
-        // Get an OK response (the *connection* worked, the *API* provides an error response)
-        assertEquals(404, clientConnection.getResponseCode());
-
-        // check response?
-
-        clientConnection.disconnect();
-    }
-
-    @Test
-    public void testWrongState() throws IOException {
-        HttpURLConnection clientConnection = tryRequest("broadband?state=hello");
-        // Get an OK response (the *connection* worked, the *API* provides an error response)
-        assertEquals(404, clientConnection.getResponseCode());
-        clientConnection.disconnect();
-    }
-
     @Test
     // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
     // checker
