@@ -110,7 +110,8 @@ public class LoadCSVHandlerTests {
   }
 
   /**
-   * Test for checking if an invalid file results in a loadStatus of 500
+   * Test for checking if an invalid file results in a loadStatus of 200 as it does not crash and
+   * instead provides an informational message
    *
    * @throws IOException
    */
@@ -118,7 +119,7 @@ public class LoadCSVHandlerTests {
   public void testAPIReadCSVWithInvalidFilename() throws IOException {
     String invalidFileName = "nonexistent_file.csv";
     HttpURLConnection clientConnection = tryRequest(API_ENDPOINT + "?fileName=" + invalidFileName);
-    assertEquals(500, clientConnection.getResponseCode());
+    assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
     LoadCSVHandler.LoadNoDataFailureResponse response =
@@ -132,14 +133,15 @@ public class LoadCSVHandlerTests {
   }
 
   /**
-   * Test for checking if no file or parameter at all results in a loadStatus of 500
+   * Test for checking if no file or parameter at all results in a loadStatus of 200 as it does not
+   * crash and instead provides an informational message
    *
    * @throws IOException
    */
   @Test
   public void testAPIReadCSVWithNoFileName() throws IOException {
     HttpURLConnection clientConnection = tryRequest(API_ENDPOINT);
-    assertEquals(500, clientConnection.getResponseCode());
+    assertEquals(200, clientConnection.getResponseCode());
 
     Moshi moshi = new Moshi.Builder().build();
     LoadCSVHandler.LoadNoDataFailureResponse response =
