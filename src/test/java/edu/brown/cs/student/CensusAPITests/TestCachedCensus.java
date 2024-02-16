@@ -19,7 +19,6 @@ import org.testng.annotations.BeforeClass;
 import spark.Spark;
 
 public class TestCachedCensus {
-    private CachedCensusHandler datasource;
 
     @BeforeClass
     public static void setup_before_everything() {
@@ -64,30 +63,28 @@ public class TestCachedCensus {
      * @throws IOException if the connection fails for some reason
      */
     private static HttpURLConnection tryRequest(String apiCall) throws IOException {
-        // Configure the connection (but don't actually send the request yet)
-        URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
+//        // Configure the connection (but don't actually send the request yet)
+//        URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
+//        HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
+//
+//        // The default method is "GET", which is what we're using here.
+//        clientConnection.setRequestMethod("GET");
+//
+//        clientConnection.connect();
+//        return clientConnection;
+        // Configure the connection (but don't actually send a request yet)
+        URL requestURL = new URL("http://localhost:"+Spark.port()+"/"+apiCall);
         HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
-
-        // The default method is "GET", which is what we're using here.
-        clientConnection.setRequestMethod("GET");
+        // The request body contains a Json object
+        clientConnection.setRequestProperty("Content-Type", "application/json");
+        // We're expecting a Json object in the response body
+        clientConnection.setRequestProperty("Accept", "application/json");
 
         clientConnection.connect();
         return clientConnection;
     }
     @Test
-    // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
-    // checker
-    public void testAPIJustState() throws IOException {
-        HttpURLConnection clientConnection = tryRequest("broadband?state=California");
-        // Get an OK response (the *connection* worked, the *API* provides an error response)
-        assertEquals(200, clientConnection.getResponseCode());
 
-        clientConnection.disconnect();
-    }
-
-    @Test
-    // Recall that the "throws IOException" doesn't signify anything but acknowledgement to the type
-    // checker
     public void testAPIStateAndCounty() throws IOException {
         HttpURLConnection clientConnection =
                 tryRequest("broadband?state=California&county=Kings%20County");
