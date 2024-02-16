@@ -6,7 +6,6 @@ import edu.brown.cs.student.main.Creators.ListStringCreator;
 import edu.brown.cs.student.main.Search.Search;
 import edu.brown.cs.student.main.server.Server;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -39,10 +38,10 @@ public class SearchCSVHandler implements Route {
     if (Server.loadStatus == 200) {
 
       String searchValue = request.queryParams("searchValue");
-        if (searchValue == null){
-          return new SearchDataFailureResponse("no search value found, please enter a value to search for by using \"http://localhost:3232/searchcsv?searchValue=&lt;value&gt;.\""
-              + " Other parameters include \"hasHeaders=&lt;boolean&gt;\", \"columnNameIdentifier=&lt;string&gt;\", and  \"columnIndexIdentifier=&lt;int&gt;\" ");
-        }
+      if (searchValue == null){
+        return new SearchDataFailureResponse("no search value found, please enter a value to search for by using \"http://localhost:3232/searchcsv?searchValue=&lt;value&gt;.\""
+                + " Other parameters include \"hasHeaders=&lt;boolean&gt;\", \"columnNameIdentifier=&lt;string&gt;\", and  \"columnIndexIdentifier=&lt;int&gt;\" ");
+      }
 
       boolean hasHeaders = Boolean.parseBoolean(request.queryParams("hasHeaders"));
 //      if (hasHeaders == true || hasHeaders == false || hasHeaders == null){
@@ -68,11 +67,10 @@ public class SearchCSVHandler implements Route {
       try {
 
         Map.Entry<String, Integer> columnIdentifier =
-            new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
+                new AbstractMap.SimpleEntry<>(columnNameIdentifier, columnIndexIdentifier);
         CSVParser<List<String>> parser =
-            new CSVParser<>(
-                new BufferedReader(new FileReader("datasource/" + Server.fileName)),
-                new ListStringCreator());
+                new CSVParser<>(
+                        new BufferedReader(new FileReader("datasource/" + Server.fileName)), new ListStringCreator());
         Search search = new Search(parser, searchValue, columnIdentifier, hasHeaders);
         Object result = search.search();
         if (result.equals(1)){
@@ -94,12 +92,11 @@ public class SearchCSVHandler implements Route {
         this.csvData = search.getResultList();
 
         return new SearchDataSuccessResponse(this.csvData).serialize();
-
-
+      }
       catch (Exception e) {
         // Handle any other unexpected exceptions
         e.printStackTrace();
-        System.out.println("Your file was not found.");
+        throw new RuntimeException("Unexpected error during processing: " + e.getMessage());
       }
     }
     if (Server.loadStatus != 200) {
@@ -121,7 +118,7 @@ public class SearchCSVHandler implements Route {
         // Initialize Moshi which takes in this class and returns it as JSON!
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<SearchDataSuccessResponse> adapter =
-            moshi.adapter(SearchDataSuccessResponse.class);
+                moshi.adapter(SearchDataSuccessResponse.class);
         return adapter.toJson(this);
       } catch (Exception e) {
         // For debugging purposes, show in the console _why_ this fails
