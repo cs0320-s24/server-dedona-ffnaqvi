@@ -60,18 +60,27 @@ We made the following design choices:
 This isn't a bug but I have a setup issue I wasn't able to get fixed at conceptual hours/Ed in which I can't import the checkstyle format. See ed post #12 for details. I will attempt to get this fixed at the next conceptual hours as well. 
 # Tests
 We had the following testing suites:       
-* TestCachedCensus, which uses mocking to test the ACS API caching
-  * X tests
+* TestCachedCensus, which uses mock, backend, and integration tests to test the functionality of caching
+  * Tests that the cache contains an item
+  * tests that the cache can only contain the pre-determined size of items
+  * tests that the cache entries expire after the pre-determined time
 * TestCensusAPIUtilities, which tests the deserialization of the Census data through backend testing
-  * X tests
+  * test the deserialization of the Census
 * TestCensusHandler, which uses integration testing to ensure the API endpoint is being reached correctly
-  *  X tests
+  * tests the error_datasource
+  * tests the error_bad_request
+  * tests the error_bad_json
+  * tests for reguar API request
 * LoadCSVHandlerTests, which tests the functionality of the loadcsv endpoint through integration and backend testing
-  * X tests
+  * tests multiple files
+  * test loadinf failure
 * ViewCSVParserTests, which tests the functionality of the viewcsv endpoint through integration and backend testing
-  * X tests
+  * tests error in view before load
+  * tests basic funcationality
 * SearchCSVHandlerTests, which tests the functionality of the searchcsv endpoint through integration and backend testing
-  * X tests
+  * tests error in search before load
+  * tests basic search
+  * tests wrong input
 
 We also tested the user interface manually through a variety of different inputs in the browser.
 # How to...
