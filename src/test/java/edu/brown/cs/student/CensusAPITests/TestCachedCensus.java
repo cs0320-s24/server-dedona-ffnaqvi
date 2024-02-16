@@ -8,6 +8,8 @@ import edu.brown.cs.student.main.Census.CensusHandler;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.jupiter.api.AfterEach;
@@ -30,7 +32,14 @@ public class TestCachedCensus {
 
     @BeforeEach
     public void setup() {
-        MockedAPIDatasource mockedSource = new MockedAPIDatasource();
+        Map<String, Object> responseMap = new HashMap<>();
+
+        responseMap.put("result", "success");
+        responseMap.put("Current Date and Time", "2024-02-16 11:48:58");
+        responseMap.put("State", "California");
+        responseMap.put("County", "Kings County");
+        responseMap.put("Broadband Result", "[Kings County, California has the estimated percent broadband internet subscription of: 83.5%]");
+        MockedAPIDatasource mockedSource = new MockedAPIDatasource(responseMap);
 
         // Re-initialize state, etc. for _every_ test method run
         Spark.get("broadband", new CensusHandler(mockedSource));
@@ -88,144 +97,3 @@ public class TestCachedCensus {
         clientConnection.disconnect();
     }
 }
-//
-//import static org.junit.jupiter.api.Assertions.assertEquals;
-//
-//import edu.brown.cs.student.main.Caching.CachedCensusHandler;
-//import edu.brown.cs.student.main.Caching.MockedAPIDatasource;
-//import org.junit.jupiter.api.AfterEach;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import spark.Spark;
-//
-//import java.io.IOException;
-//import java.net.HttpURLConnection;
-//import java.net.URL;
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//public class TestCachedCensus {
-//    private CachedCensusHandler datasource;
-//    private MockedAPIDatasource mockedSource;
-//
-//    @BeforeEach
-//    public void setup() {
-//        mockedSource = new MockedAPIDatasource();
-//        datasource = new CachedCensusHandler(mockedSource);
-//
-//        Spark.port(0);
-//        Spark.get("broadband", new CensusHandler(datasource));
-//
-//        Spark.init();
-//        Spark.awaitInitialization();
-//    }
-//
-//    @AfterEach
-//    public void teardown() {
-//        Spark.unmap("broadband");
-//        Spark.awaitStop();
-//    }
-//
-//    @Test
-//    public void testCacheHit() throws IOException {
-//        // Make the first request
-//        HttpURLConnection firstConnection = tryRequest("broadband?state=California");
-//        assertEquals(200, firstConnection.getResponseCode());
-//        firstConnection.disconnect();
-//
-//        // Make the second request
-//        HttpURLConnection secondConnection = tryRequest("broadband?state=California");
-//        assertEquals(200, secondConnection.getResponseCode());
-//        secondConnection.disconnect();
-//
-//        // Check that the second response came from the cache
-//        assertEquals(1, mockedSource.getRequestCount("California"));
-//    }
-//
-//    @Test
-//    public void testCacheMiss() throws IOException {
-//        // Make the first request
-//        HttpURLConnection firstConnection = tryRequest("broadband?state=California");
-//        assertEquals(200, firstConnection.getResponseCode());
-//        firstConnection.disconnect();
-//
-//        // Make the second request with a different state
-//        HttpURLConnection secondConnection = tryRequest("broadband?state=New%20York");
-//        assertEquals(200, secondConnection.getResponseCode());
-//        secondConnection.disconnect();
-//
-//        // Check that the second response triggered a new API call
-//        assertEquals(1, mockedSource.getRequestCount("California"));
-//        assertEquals(1, mockedSource.getRequestCount("New York"));
-//    }
-//
-//    private static HttpURLConnection tryRequest(String apiCall) throws IOException {
-//        URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
-//        HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
-//        clientConnection.setRequestMethod("GET");
-//        clientConnection.connect();
-//        return clientConnection;
-//    }
-//}
-//
-//class MockedAPIDatasource implements CensusDatasource {
-//    private final Map<String, Integer> requestCounts;
-//
-//    public MockedAPIDatasource() {
-//        this.requestCounts = new HashMap<>();
-//    }
-//
-//    @Override
-//    public String getData(String state, String county) {
-//        requestCounts.put(state, requestCounts.getOrDefault(state, 0) + 1);
-//        // Simulate API response, returning dummy data for testing
-//        return "Dummy data for " + state + (county != null ? " - " + county : "");
-//    }
-//
-//    public int getRequestCount(String state) {
-//        return requestCounts.getOrDefault(state, 0);
-//    }
-//}
-//
-//interface CensusDatasource {
-//    String getData(String state, String county);
-//}
-//
-//class CachedCensusHandler implements CensusDatasource {
-//    private final CensusDatasource datasource;
-//    private final Map<String, String> cache;
-//
-//    public CachedCensusHandler(CensusDatasource datasource) {
-//        this.datasource = datasource;
-//        this.cache = new HashMap<>();
-//    }
-//
-//    @Override
-//    public String getData(String state, String county) {
-//        String key = state + (county != null ? "_" + county : "");
-//        if (cache.containsKey(key)) {
-//            System.out.println("Cache hit for " + key);
-//            return cache.get(key);
-//        } else {
-//            System.out.println("Cache miss for " + key);
-//            String data = datasource.getData(state, county);
-//            cache.put(key, data);
-//            return data;
-//        }
-//    }
-//}
-//
-//class CensusHandler implements spark.Route {
-//    private final CensusDatasource datasource;
-//
-//    public CensusHandler(CensusDatasource datasource) {
-//        this.datasource = datasource;
-//    }
-//
-//    @Override
-//    public Object handle(spark.Request request, spark.Response response) throws Exception {
-//        String state = request.queryParams("state");
-//        String county = request.queryParams("county");
-//        return datasource.getData(state, county);
-//    }
-//}
