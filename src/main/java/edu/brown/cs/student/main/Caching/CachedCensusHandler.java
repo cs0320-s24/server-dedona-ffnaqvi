@@ -40,7 +40,6 @@ public class CachedCensusHandler implements ACSDatasource {
                   @Override
                   public String load(String key) throws Exception {
                     cacheKey = key;
-                    System.out.println(key);
                     String[] codes = key.split(",");
                     String stateCode = codes[0];
                     String countyCode = codes[1];
@@ -64,9 +63,10 @@ public class CachedCensusHandler implements ACSDatasource {
     // "get" is designed for concurrent situations; for today, use getUnchecked:
     this.cacheKey = stateCode + "," + countyCode;
 
-    String result = cache.getUnchecked(this.cacheKey);
+    String result = this.cache.getUnchecked(this.cacheKey);
     // For debugging and demo (would remove in a "real" version):
-    System.out.println(cache.stats());
+    System.out.println(this.cache.stats());
+    System.out.println("the cache size is:" + this.cache.size());
     return result;
   }
 
