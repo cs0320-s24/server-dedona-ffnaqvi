@@ -3,6 +3,8 @@ package edu.brown.cs.student.main.Caching;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -12,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class CachedCensusHandler implements ACSDatasource {
 
   private ACSDatasource wrappedCensusHandler;
-  private final LoadingCache<String, String> cache;
+  public final LoadingCache<String, String> cache;
   private String cacheKey;
 
   /**
@@ -66,6 +68,9 @@ public class CachedCensusHandler implements ACSDatasource {
     String result = this.cache.getUnchecked(this.cacheKey);
     // For debugging and demo (would remove in a "real" version):
     System.out.println(this.cache.stats());
+    for (Map.Entry<String, String> entry : cache.asMap().entrySet()) {
+      System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+    }
     System.out.println("the cache size is:" + this.cache.size());
     return result;
   }
