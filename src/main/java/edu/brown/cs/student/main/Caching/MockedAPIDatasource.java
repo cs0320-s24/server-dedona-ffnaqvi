@@ -22,17 +22,19 @@ public class MockedAPIDatasource implements ACSDatasource {
   public MockedAPIDatasource(Map<String, Object> map, LoadingCache<String, String> cache) {
     this.constantMap = map;
     this.cache = cache;
-    cache =
-        CacheBuilder.newBuilder()
-        .maximumSize(3)
-        .expireAfterWrite(2, TimeUnit.MINUTES)
-        .build(new CacheLoader<String, String>() {
-          @Override
-          public String load(String key) throws Exception {
-            // Implement the loading logic here (optional)
-            return null;
-          }
-        });
+    // Configure the cache for maximum size and expiration time
+    if (cache == null) {
+      this.cache = CacheBuilder.newBuilder()
+          .maximumSize(3)
+          .expireAfterWrite(1, TimeUnit.MINUTES)
+          .build(new CacheLoader<String, String>() {
+            @Override
+            public String load(String key) throws Exception {
+              // Implement the loading logic here (optional)
+              return null;
+            }
+          });
+    }
   }
 
 
