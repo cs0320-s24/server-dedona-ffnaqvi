@@ -48,14 +48,12 @@ public class LoadCSVHandler implements Route {
       if (!this.csvData.isEmpty()) {
         Server.loadStatus = 200; // success code
         return new LoadDataSuccessResponse("success, your CSV data has been loaded").serialize();
-      }
-      else {
+      } else {
         Server.loadStatus = -1;
         return new LoadNoDataFailureResponse().serialize();
       }
-    }
-    catch (Exception e) {
-      //in case of any exceptions
+    } catch (Exception e) {
+      // in case of any exceptions
       return new LoadNoDataFailureResponse().serialize();
     }
   }
@@ -89,7 +87,8 @@ public class LoadCSVHandler implements Route {
   /** Response object to send if someone requested data from an invalid csv */
   public record LoadNoDataFailureResponse(String response_type) {
     public LoadNoDataFailureResponse() {
-      this("error loading, please ensure your file name is correct and within the datasource folder.");
+      this(
+          "error loading, please ensure your file name is correct and within the datasource folder.");
     }
 
     /**

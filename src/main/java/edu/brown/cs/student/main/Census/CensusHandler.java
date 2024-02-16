@@ -3,7 +3,6 @@ package edu.brown.cs.student.main.Census;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
-import edu.brown.cs.student.main.CSVParser.SearchCSVHandler;
 import edu.brown.cs.student.main.Caching.ACSDatasource;
 import java.io.IOException;
 import java.net.URI;
@@ -49,26 +48,31 @@ public class CensusHandler implements Route, ACSDatasource {
    * @param response The response object providing functionality for modifying the response
    */
   @Override
-  public Object handle(Request request, Response response) throws IOException {
+  public Object handle(Request request, Response response) throws IOException, URISyntaxException, InterruptedException {
 
-    String state = request.queryParams("state");
-    String stateCode = this.stateCodes.get(state);
-    this.stateCode = stateCode;
-    String countyCode;
-
-    /* In the case that the user does not enter a county param */
-    String county = request.queryParams("county");
-    if (county == null) {
-      county = "*";
-      countyCode = "*";
-    } else {
-      countyCode = getCountyCodes(stateCode, county);
-    }
-    this.countyCode = countyCode;
     // Creates a hashmap to store the results of the request
 
     Map<String, Object> responseMap = new HashMap<>();
     try {
+      String state = request.queryParams("state");
+
+      String stateCode = this.stateCodes.get(state);
+      if (stateCode == null) {
+        throw new NullPointerException("Your state doesn't exist.");
+      }
+      this.stateCode = stateCode;
+      String countyCode;
+
+      /* In the case that the user does not enter a county param */
+      String county = request.queryParams("county");
+      if (county == null) {
+        county = "*";
+        countyCode = "*";
+      } else {
+        countyCode = getCountyCodes(stateCode, county);
+      }
+      this.countyCode = countyCode;
+
       if (state == null) {
         throw new NullPointerException("No state param entered");
       }
@@ -88,12 +92,10 @@ public class CensusHandler implements Route, ACSDatasource {
       responseMap.put("County", county);
       responseMap.put("Broadband Result", census);
       return responseMap;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       response.status(404);
 
       responseMap.put("result", "Exception: " + e);
-
     }
     return responseMap;
   }
@@ -136,6 +138,7 @@ public class CensusHandler implements Route, ACSDatasource {
 
   /**
    * Method to set the datasource to the passed in datasource
+   *
    * @param datasource
    */
   @Override
@@ -200,7 +203,7 @@ public class CensusHandler implements Route, ACSDatasource {
    * @return a String of the countyCode
    * @throws IOException
    */
-  private String getCountyCodes(String stateCode, String targetCounty) throws IOException {
+  private String getCountyCodes(String stateCode, String targetCounty) throws IOException, URISyntaxException, InterruptedException {
     try {
       // Send a request to the API to get county names and codes for a specific state
       HttpRequest request =
@@ -245,27 +248,12 @@ public class CensusHandler implements Route, ACSDatasource {
           }
         }
       }
-    } catch (IOException | InterruptedException | URISyntaxException e) {
-      e.printStackTrace();
-      // Handle the exception as needed
+    }
+    catch (IOException | InterruptedException | URISyntaxException e) {
+      throw e;
     }
 
     // Return null if the county is not found
     throw new IOException("No found county");
-  }
-
-  /** Response object to send error message to user*/
-  public record CensusDataFailureResponse(String response_type, String errorMessage) {
-    public CensusDataFailureResponse(String errorMessage) {
-      this("error searching", errorMessage);
-    }
-
-    /**
-     * @return this response, serialized as Json
-     */
-    String serialize() {
-      Moshi moshi = new Moshi.Builder().build();
-      return moshi.adapter(CensusDataFailureResponse.class).toJson(this);
-    }
   }
 }

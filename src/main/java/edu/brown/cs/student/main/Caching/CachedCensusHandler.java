@@ -6,8 +6,8 @@ import com.google.common.cache.LoadingCache;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Proxy class for caching data in which we check if something is already in the cache
- * and send a request to the ACS API if not
+ * Proxy class for caching data in which we check if something is already in the cache and send a
+ * request to the ACS API if not
  */
 public class CachedCensusHandler implements ACSDatasource {
 
@@ -30,8 +30,8 @@ public class CachedCensusHandler implements ACSDatasource {
             .build(
                 new CacheLoader<>() {
                   /**
-                   * Method to send a request with the given key to the ACS API, called upon
-                   * failure to find information in the cache
+                   * Method to send a request with the given key to the ACS API, called upon failure
+                   * to find information in the cache
                    *
                    * @param key
                    * @return
@@ -52,8 +52,8 @@ public class CachedCensusHandler implements ACSDatasource {
   }
 
   /**
-   * Function to send a request to the cache for the given key,
-   * sends a request to the ACS API if not found in the cache
+   * Function to send a request to the cache for the given key, sends a request to the ACS API if
+   * not found in the cache
    *
    * @param stateCode
    * @param countyCode
@@ -72,6 +72,7 @@ public class CachedCensusHandler implements ACSDatasource {
 
   /**
    * Function to set the datasource to the passed in datasource
+   *
    * @param datasource
    */
   @Override
