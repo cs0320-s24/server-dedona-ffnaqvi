@@ -40,7 +40,9 @@ public class TestMockedDatasource {
   public void testMock() {
     CachedCensusHandler cacheForMock = new CachedCensusHandler(3, 2);
     CensusHandler censusHandlerForMock = new CensusHandler(cacheForMock);
-    Map<String, Object> mockmap = new HashMap<>();
+//    Map<String, Object> mockmap = new HashMap<>();
+    Map<String, Object> responseMap = new HashMap<>();
+
     Census censusForMock = new Census();
     censusForMock.setState("Alabama");
     censusForMock.setCounty("Lauderdale County");
@@ -49,19 +51,18 @@ public class TestMockedDatasource {
     String state = "Alabama";
     String county = "Lauderdale County";
 
-    Map<String, Object> responseMap = new HashMap<>();
     responseMap.put("result", "success");
     responseMap.put("Current Date and Time", "current date and time");
     responseMap.put("State", state);
     responseMap.put("County", county);
     responseMap.put("Broadband Result", censusForMock);
 
-    MockedAPIDatasource mockCall = new MockedAPIDatasource(mockmap);
+    MockedAPIDatasource mockCall = new MockedAPIDatasource(responseMap);
 
     Map<String, Object> resultMap = mockCall.mockAPICall("Alabama", "Lauderdale County");
 
 
-    //Assert.assertEquals(resultMap.get("Broadband Result").toString(),"[Lauderdale County, Alabama has the estimated percent broadband internet subscription of: 77.8%]\n");
+    Assert.assertEquals(resultMap.get("Broadband Result").toString(),"[Lauderdale County, Alabama has the estimated percent broadband internet subscription of: 77.8%]\n");
 
 
   }
